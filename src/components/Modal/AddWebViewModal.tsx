@@ -28,7 +28,7 @@ const AddWebViewModal = ({ toggleModal }: any) => {
   return (
     <div
       style={{ left: '70px' }}
-      className="absolute top-0 right-0 bottom-0 backdrop-blur-sm backdrop-opacity-2 flex justify-start items-center"
+      className="absolute top-0 right-0 bottom-0 z-10 backdrop-blur-sm backdrop-opacity-2 flex justify-start items-center"
     >
       <div
         className="bg-white shadow-lg"

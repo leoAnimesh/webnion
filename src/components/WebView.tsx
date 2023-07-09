@@ -1,10 +1,8 @@
 import { useRef, memo, useEffect, useState } from 'react';
 import { BiLeftArrow, BiRightArrow, BiPrinter } from 'react-icons/bi';
 import { TfiReload } from 'react-icons/tfi';
-// import { useAppDispatch } from '../redux/hooks';
 
 const WebView = ({ data, show = false }: any) => {
-  // const dispatch = useAppDispatch();
   let webViewRef = useRef<any>(null);
   const [currentURL, setCurrentURL] = useState(data.url);
   const [loading, setLoading] = useState(true);
