@@ -114,7 +114,7 @@ const WebView = ({ data, show = false }: any) => {
       <webview
         ref={webViewRef}
         src={data?.url}
-        partition={`preset:${data?.name}`}
+        partition={`persist:webx}`}
         style={{
           width: '100%',
           height: '100%',
