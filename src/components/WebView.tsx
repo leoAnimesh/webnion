@@ -1,5 +1,6 @@
 import { useRef, memo, useEffect, useState } from 'react';
-import { BiLeftArrow, BiRightArrow, BiPrinter } from 'react-icons/bi';
+import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
+import { GoTools } from 'react-icons/go';
 import { TfiReload } from 'react-icons/tfi';
 
 const WebView = ({ data, show = false }: any) => {
@@ -19,52 +20,57 @@ const WebView = ({ data, show = false }: any) => {
     webViewRef.current.reloadIgnoringCache();
   };
 
-  const printPage = () => {
+  const openDevTools = () => {
     webViewRef.current.openDevTools();
   };
 
   useEffect(() => {
-    const handleNavigation = (e: any) => {
-      setCurrentURL(e.url);
-    };
+    if (webViewRef?.current) {
+      const handleNavigation = (e: any) => {
+        setCurrentURL(e.url);
+      };
 
-    const handleLoading = (loading: boolean) => {
-      setLoading(loading);
-    };
+      const handleLoading = (loading: boolean) => {
+        setLoading(loading);
+      };
 
-    webViewRef.current.addEventListener('did-stop-loading', () =>
-      handleLoading(false)
-    );
-    webViewRef.current.addEventListener('did-start-loading', () =>
-      handleLoading(true)
-    );
+      webViewRef?.current?.addEventListener('did-stop-loading', () =>
+        handleLoading(false)
+      );
+      webViewRef?.current?.addEventListener('did-start-loading', () =>
+        handleLoading(true)
+      );
 
-    webViewRef.current.addEventListener('did-navigate', handleNavigation);
+      webViewRef?.current?.addEventListener('did-navigate', handleNavigation);
 
-    webViewRef.current.addEventListener(
-      'did-navigate-in-page',
-      handleNavigation
-    );
-
-    return () => {
-      webViewRef.current.removeEventListener(
+      webViewRef?.current?.addEventListener(
         'did-navigate-in-page',
         handleNavigation
       );
-      webViewRef.current.removeEventListener('did-navigate', handleNavigation);
-      webViewRef.current.removeEventListener('did-stop-loading', () =>
-        handleLoading(false)
-      );
-      webViewRef.current.removeEventListener('did-start-loading', () =>
-        handleLoading(false)
-      );
-    };
+
+      return () => {
+        webViewRef?.current?.removeEventListener(
+          'did-navigate-in-page',
+          handleNavigation
+        );
+        webViewRef?.current?.removeEventListener(
+          'did-navigate',
+          handleNavigation
+        );
+        webViewRef?.current?.removeEventListener('did-stop-loading', () =>
+          handleLoading(false)
+        );
+        webViewRef?.current?.removeEventListener('did-start-loading', () =>
+          handleLoading(false)
+        );
+      };
+    }
   }, []);
 
   return (
     <div
-      className="flex flex-1 flex-col relative"
-      style={{ display: show ? 'flex' : 'none' }}
+      className="overflow-hidden flex flex-col relative"
+      style={{ display: show ? 'flex' : 'none', width: '96vw' }}
     >
       <section className="flex justify-between p-3 border-b-2">
         {/* left section  */}
@@ -105,9 +111,9 @@ const WebView = ({ data, show = false }: any) => {
         <div className="flex gap-2">
           <div
             className="border-2  p-1 cursor-pointer rounded-md"
-            onClick={printPage}
+            onClick={openDevTools}
           >
-            <BiPrinter />
+            <GoTools />
           </div>
         </div>
       </section>

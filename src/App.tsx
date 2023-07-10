@@ -15,19 +15,29 @@ function App() {
   );
 
   const renderWebViews = useMemo(() => {
-    return webViews.map((item: WebView, index: number) => {
-      return (
-        <WebView
-          show={currentWebViewId === item.id ? true : false}
-          data={item}
-          key={index}
-        />
-      );
-    });
-  }, [currentWebViewId]);
+    return webViews
+      .filter((item) => item.active === true)
+      .map((item: WebView, index: number) => {
+        return (
+          <WebView
+            show={currentWebViewId === item.id ? true : false}
+            data={item}
+            key={index}
+          />
+        );
+      });
+  }, [currentWebViewId, webViews]);
 
   return (
-    <main style={{ display: 'flex', flex: 1, height: '100vh', width: '100%' }}>
+    <main
+      style={{
+        display: 'flex',
+        justifyContent: 'end',
+        flex: 1,
+        height: '100vh',
+        width: '100%',
+      }}
+    >
       <SideBar />
       {renderWebViews}
     </main>

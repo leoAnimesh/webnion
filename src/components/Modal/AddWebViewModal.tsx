@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { useAppDispatch } from '../../redux/hooks';
 import { addWebView } from '../../redux/slices/WebViewsSlice';
 
-const AddWebViewModal = ({ toggleModal }: any) => {
+const AddWebViewModal = ({ toggleModal, sideBarExpanded }: any) => {
   const dispatch = useAppDispatch();
   const [formData, setFormData] = useState({
     name: '',
@@ -21,17 +21,17 @@ const AddWebViewModal = ({ toggleModal }: any) => {
   const onSubmit = (e: any) => {
     e.preventDefault();
     let id = uuid();
-    dispatch(addWebView({ ...formData, id }));
+    dispatch(addWebView({ ...formData, id, active: true }));
     toggleModal();
   };
 
   return (
     <div
-      style={{ left: '70px' }}
-      className="absolute top-0 right-0 bottom-0 z-10 backdrop-blur-sm backdrop-opacity-2 flex justify-start items-center"
+      style={{ left: `${sideBarExpanded ? 248 : 68}px` }}
+      className="absolute top-0 right-0 bottom-0 h-screen w-screen z-10 backdrop-blur-sm backdrop-opacity-2 flex justify-start items-center"
     >
       <div
-        className="bg-white shadow-lg"
+        className="bg-white shadow-lg flex p-3"
         style={{ width: '300px', height: '100%' }}
       >
         <form onSubmit={onSubmit}>
