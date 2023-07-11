@@ -117,7 +117,6 @@ const SideBar = () => {
                 <p className="text-xs">webx-appname </p>
               </div>
             )}
-            {/* <BsBrowserChrome className="text-2xl" /> */}
           </div>
         </div>
         <hr />
@@ -145,11 +144,16 @@ const SideBar = () => {
                   </div>
                 )}
               <div className="flex gap-3">
-                <img
-                  className="w-5 h-5 shadow-md rounded-md"
-                  src={`http://www.google.com/s2/favicons?domain=${items.url}`}
-                  alt="icon"
-                />
+                {index === 0 ? (
+                  <div className="text-xl">📦</div>
+                ) : (
+                  <img
+                    className="w-5 h-5 shadow-md rounded-md"
+                    src={`http://www.google.com/s2/favicons?domain=${items.url}`}
+                    alt="icon"
+                  />
+                )}
+
                 {sideBarExpanded && <p className="capitalize">{items.name}</p>}
               </div>
               {/* web view item buttons  */}

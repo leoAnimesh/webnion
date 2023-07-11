@@ -4,6 +4,7 @@ import { useAppSelector } from './redux/hooks';
 import SideBar from './components/shared/SideBar';
 import ManageWorkspaceModal from './components/Modal/ManageWorkspaceModal';
 import MainWindowWrapper from './components/shared/MainWindowWrapper';
+import WorkspaceHome from './components/shared/WorkspaceHome';
 
 interface WebView {
   id: string;
@@ -20,6 +21,19 @@ function App() {
     return workSpaces[currentWorkSpace]?.webViews
       .filter((item) => item.active === true)
       .map((item: WebView, index: number) => {
+        if (index === 0) {
+          return (
+            <MainWindowWrapper
+              show={
+                workSpaces[currentWorkSpace]?.currentWebViewId === item.id
+                  ? true
+                  : false
+              }
+            >
+              <WorkspaceHome />
+            </MainWindowWrapper>
+          );
+        }
         return (
           <MainWindowWrapper
             key={index}

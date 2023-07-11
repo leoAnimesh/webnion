@@ -36,8 +36,8 @@ const initialState: WorkSpaces = {
       webViews: [
         {
           id: '03220916-6c71-4d83-9545-487d09e8bc87',
-          name: 'Google',
-          url: 'https://google.com',
+          name: 'WebApps Menu',
+          url: '',
           active: true,
         },
       ],
@@ -57,8 +57,6 @@ export const WorkspaceSlice = createSlice({
       state.workSpaces[state.currentWorkSpace].currentWebViewId =
         action.payload.id;
       state.workSpaces[state.currentWorkSpace].webViews.push(action.payload);
-      // state.currentWebViewId = action.payload.id;
-      // state.webViews.push(action.payload);
     },
     changeCurrentWebView: (state, action: PayloadAction<{ id: string }>) => {
       const { id } = action.payload;
@@ -125,8 +123,8 @@ export const WorkspaceSlice = createSlice({
         webViews: [
           {
             id,
-            name: 'Google',
-            url: 'https://google.com',
+            name: 'WebApps Menu',
+            url: '',
             active: true,
           },
         ],

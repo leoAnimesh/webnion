@@ -77,20 +77,20 @@ const ManageWebViewModal = ({ toggleModal }: any) => {
         <form onSubmit={onSubmit} className="flex flex-col gap-3 w-full">
           <h1>Add Web Apps</h1>
           <input
-            value={formData.name}
-            onChange={handleFormChange}
-            type="text"
-            className="border-2 w-full px-2 py-1 placeholder:text-sm"
-            placeholder="Name of WebApp"
-            name="name"
-          />
-          <input
             value={formData.url}
             onChange={handleFormChange}
             type="text"
             className="border-2 w-full px-2 py-1 placeholder:text-sm"
             placeholder="https://example.com"
             name="url"
+          />
+          <input
+            value={formData.name}
+            onChange={handleFormChange}
+            type="text"
+            className="border-2 w-full px-2 py-1 placeholder:text-sm"
+            placeholder="Name of WebApp"
+            name="name"
           />
           <button
             type="submit"
