@@ -4,18 +4,18 @@ import {
   getDefaultMiddleware,
 } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
-import webViewReducer from './slices/WebViewsSlice';
+import workspaceReducer from './slices/WorkspaceSlice';
 import storage from 'redux-persist/lib/storage';
 
 const rootReducer = combineReducers({
-  webviewsState: webViewReducer,
+  workspaceState: workspaceReducer,
 });
 
 const persistConfig = {
   key: 'root',
   version: 1,
   storage,
-  whitelist: ['webviewsState'],
+  whitelist: ['workspaceState'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

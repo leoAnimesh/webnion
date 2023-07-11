@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import WebView from './components/WebView';
 import { useAppSelector } from './redux/hooks';
 import SideBar from './components/SideBar';
+import ManageWorkspaceModal from './components/Modal/ManageWorkspaceModal';
 
 interface WebView {
   id: string;
@@ -10,28 +11,36 @@ interface WebView {
 }
 
 function App() {
-  const { currentWebViewId, webViews } = useAppSelector(
-    (state) => state.webviewsState
+  const { workSpaces, currentWorkSpace, showWorkspaceModal } = useAppSelector(
+    (state) => state.workspaceState
   );
 
   const renderWebViews = useMemo(() => {
-    return webViews
+    return workSpaces[currentWorkSpace]?.webViews
       .filter((item) => item.active === true)
       .map((item: WebView, index: number) => {
         return (
           <WebView
-            show={currentWebViewId === item.id ? true : false}
+            show={
+              workSpaces[currentWorkSpace]?.currentWebViewId === item.id
+                ? true
+                : false
+            }
             data={item}
             key={index}
           />
         );
       });
-  }, [currentWebViewId, webViews]);
+  }, [
+    workSpaces[currentWorkSpace].currentWebViewId,
+    workSpaces[currentWorkSpace]?.webViews,
+  ]);
 
   return (
     <main className="flex flex-1 justify-end h-screen w-full ">
       <SideBar />
       {renderWebViews}
+      {showWorkspaceModal && <ManageWorkspaceModal />}
     </main>
   );
 }

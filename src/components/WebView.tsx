@@ -2,9 +2,11 @@ import { useRef, memo, useEffect, useState } from 'react';
 import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
 import { GoTools } from 'react-icons/go';
 import { TfiReload } from 'react-icons/tfi';
+import { useAppSelector } from '../redux/hooks';
 
 const WebView = ({ data, show = false }: any) => {
   let webViewRef = useRef<any>(null);
+  const { sideBarExpanded } = useAppSelector((state) => state.workspaceState);
   const [currentURL, setCurrentURL] = useState(data.url);
   const [loading, setLoading] = useState(true);
   const [windowSize, setWindowSize] = useState<any>({
@@ -37,15 +39,6 @@ const WebView = ({ data, show = false }: any) => {
       setLoading(loading);
     };
 
-    const handleResize = (e: any) => {
-      setWindowSize({
-        width: e.target.innerWidth,
-        height: e.target.innerHeight,
-      });
-    };
-
-    window.addEventListener('resize', handleResize);
-
     webViewRef?.current?.addEventListener('did-stop-loading', () =>
       handleLoading(false)
     );
@@ -74,9 +67,41 @@ const WebView = ({ data, show = false }: any) => {
       webViewRef?.current?.removeEventListener('did-start-loading', () =>
         handleLoading(false)
       );
-      window.removeEventListener('resize', handleResize);
     };
   }, []);
+
+  useEffect(() => {
+    if (sideBarExpanded) {
+      setWindowSize((prev: any) => {
+        return {
+          ...prev,
+          width: prev.width + 70 - 260,
+        };
+      });
+    }
+
+    if (windowSize.width === window.innerWidth + 70 - 260) {
+      setWindowSize((prev: any) => {
+        return {
+          ...prev,
+          width: prev.width + 190,
+        };
+      });
+    }
+
+    const handleResize = (e: any) => {
+      setWindowSize({
+        width: e.target.innerWidth,
+        height: e.target.innerHeight,
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [sideBarExpanded]);
 
   return (
     <div
@@ -104,20 +129,16 @@ const WebView = ({ data, show = false }: any) => {
         </div>
 
         {/* middle section  */}
-        <div className="w-2/5 border-2 flex items-center rounded-md">
-          {loading ? (
-            <div
-              className="w-4 h-4 ml-1 rounded-full animate-spin absolute
+        <div className="w-2/5 border-2 flex justify-between items-center rounded-md">
+          <div className="mx-3 flex justify-center items-center">
+            {loading && (
+              <div
+                className="w-4 h-4 mx-2 rounded-full animate-spin absolute
                             border-2 border-solid border-blue-600 border-t-transparent"
-            ></div>
-          ) : (
-            ''
-          )}
-          <input
-            disabled
-            className="w-full text-center text-sm"
-            value={currentURL}
-          />
+              ></div>
+            )}
+          </div>
+          <input disabled className="text-center text-sm " value={currentURL} />
           <TfiReload className="mx-2 cursor-pointer" onClick={reloadWindow} />
         </div>
 

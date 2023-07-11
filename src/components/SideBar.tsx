@@ -4,15 +4,17 @@ import {
   changeCurrentWebView,
   deleteWebAppEntry,
   toggleActivenessWebView,
-} from '../redux/slices/WebViewsSlice';
-import AddWebViewModal from './Modal/AddWebViewModal';
+  toggleManageWorkspaceModal,
+  toggleSideBarExtended,
+} from '../redux/slices/WorkspaceSlice';
+import AddWebViewModal from './Modal/ManageWebViewModal';
 import {
   RiExpandRightLine,
   RiExpandLeftLine,
   RiDeleteBin5Line,
 } from 'react-icons/ri';
 import { RxCross2 } from 'react-icons/rx';
-import { BsBrowserChrome } from 'react-icons/bs';
+// import { BsBrowserChrome } from 'react-icons/bs';
 import { GiNightSleep } from 'react-icons/gi';
 
 interface WebView {
@@ -26,10 +28,9 @@ const SideBar = () => {
   const dispatch = useAppDispatch();
   const [AddModalVisible, setAddModalVisible] = useState(false);
   const toggleModal = () => setAddModalVisible(!AddModalVisible);
-  const [sideBarExpanded, setsideBarExpanded] = useState<boolean>(false);
   const [activeViewsIndex, setActiveViewsIndex] = useState<number>(0);
-  const { currentWebViewId, webViews } = useAppSelector(
-    (state) => state.webviewsState
+  const { workSpaces, currentWorkSpace, sideBarExpanded } = useAppSelector(
+    (state) => state.workspaceState
   );
 
   const changeWebView = (id: string, index: number) => {
@@ -55,29 +56,46 @@ const SideBar = () => {
   };
 
   useEffect(() => {
-    let arr = webViews.filter((item) => item.active === true);
+    let arr = workSpaces[currentWorkSpace].webViews.filter(
+      (item) => item.active === true
+    );
     if (arr.length >= 1 && activeViewsIndex !== 0) {
       dispatch(changeCurrentWebView({ id: arr[activeViewsIndex - 1]?.id }));
     }
-  }, [webViews]);
+  }, [workSpaces[currentWorkSpace].webViews]);
 
   return (
     <aside
-      className=" transition-all duration-200 border-2 flex flex-col fixed left-0 h-screen bg-white z-30  justify-between gap-2 p-2 "
+      className="border-2 flex flex-col fixed left-0 h-screen bg-white z-30  justify-between gap-2 p-2 "
       style={{ width: `${sideBarExpanded ? 260 : 70}px` }}
     >
       {/* sidebar top buttons  */}
       <section className="flex flex-col gap-3">
         {/* top main icon  */}
         <div
-          className={`border-gray-100 text-gray-500 relative w-full cursor-pointer h-5 mt-2 rounded-lg text-sm bold flex justify-between gap-4 px-3 items-center `}
+          onClick={() => dispatch(toggleManageWorkspaceModal())}
+          className={`border-gray-100 hover:border-gray-200 border-2 h-fit text-gray-500 relative w-full cursor-pointer rounded-lg text-sm bold flex justify-between items-center `}
         >
-          <div className="flex items-center gap-2">
-            <BsBrowserChrome className="text-2xl" />
-            {sideBarExpanded && <p>Webx</p>}
+          <div className="flex items-center gap-3">
+            <div
+              className="bg-blue-100 rounded-md text-center flex justify-center items-center"
+              style={{ width: '50px', height: '50px' }}
+            >
+              <p className="text-2xl">
+                {workSpaces[currentWorkSpace].workspaceDetails.emoji}
+              </p>
+            </div>
+            {sideBarExpanded && (
+              <div className="mb-2">
+                <p className="text-md capitalize ">
+                  {currentWorkSpace} Workspace{' '}
+                </p>
+                <p className="text-xs">webx-appname </p>
+              </div>
+            )}
+            {/* <BsBrowserChrome className="text-2xl" /> */}
           </div>
         </div>
-        <hr />
         <p
           className={`${
             sideBarExpanded ? 'text-left px-2' : 'text-center'
@@ -88,21 +106,21 @@ const SideBar = () => {
         </p>
         <hr />
         {/* active webviews */}
-        {webViews
+        {workSpaces[currentWorkSpace].webViews
           .filter((item) => item.active === true)
           .map((items: WebView, index: number) => (
             <div
               onClick={() => changeWebView(items.id, index)}
               key={index}
               className={`border-2 ${
-                currentWebViewId === items.id
+                workSpaces[currentWorkSpace].currentWebViewId === items.id
                   ? 'border-blue-600'
                   : 'border-gray-100'
               } text-gray-500 relative w-full cursor-pointer h-12 rounded-lg text-sm bold flex justify-between gap-4 px-3 items-center `}
             >
               {!sideBarExpanded &&
                 items.name !== 'Google' &&
-                currentWebViewId === items.id && (
+                workSpaces[currentWorkSpace].currentWebViewId === items.id && (
                   <div
                     className="w-4 h-4 absolute -right-2 -bottom-2 flex justify-center items-center text-white text-xs rounded-full bg-gray-400"
                     onClick={() => deactiveWebView(items.id)}
@@ -110,13 +128,13 @@ const SideBar = () => {
                     <RxCross2 />
                   </div>
                 )}
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <img
                   className="w-5 h-5 shadow-md rounded-md"
                   src={`http://www.google.com/s2/favicons?domain=${items.url}`}
                   alt="icon"
                 />
-                {sideBarExpanded && <p>{items.name}</p>}
+                {sideBarExpanded && <p className="capitalize">{items.name}</p>}
               </div>
               {/* web view item buttons  */}
               {sideBarExpanded && items.name !== 'Google' && (
@@ -146,7 +164,7 @@ const SideBar = () => {
         </p>
         <hr />
         {/* unactive web views  */}
-        {webViews
+        {workSpaces[currentWorkSpace].webViews
           .filter((item) => item.active === false)
           .map((items: WebView, index: number) => (
             <div
@@ -188,7 +206,7 @@ const SideBar = () => {
           {!sideBarExpanded && '+'}
         </button>
         <button
-          onClick={() => setsideBarExpanded(!sideBarExpanded)}
+          onClick={() => dispatch(toggleSideBarExtended())}
           className="border-2 hover:bg-gray-100 flex justify-center items-center text-white w-full h-12 rounded-lg text-3xl bold "
         >
           {sideBarExpanded && (
@@ -202,12 +220,7 @@ const SideBar = () => {
           )}
         </button>
       </section>
-      {AddModalVisible && (
-        <AddWebViewModal
-          sideBarExpanded={sideBarExpanded}
-          toggleModal={toggleModal}
-        />
-      )}
+      {AddModalVisible && <AddWebViewModal toggleModal={toggleModal} />}
     </aside>
   );
 };
