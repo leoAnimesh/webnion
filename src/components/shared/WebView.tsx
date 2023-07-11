@@ -2,17 +2,11 @@ import { useRef, memo, useEffect, useState } from 'react';
 import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
 import { GoTools } from 'react-icons/go';
 import { TfiReload } from 'react-icons/tfi';
-import { useAppSelector } from '../redux/hooks';
 
-const WebView = ({ data, show = false }: any) => {
+const WebView = ({ data }: any) => {
   let webViewRef = useRef<any>(null);
-  const { sideBarExpanded } = useAppSelector((state) => state.workspaceState);
   const [currentURL, setCurrentURL] = useState(data.url);
   const [loading, setLoading] = useState(true);
-  const [windowSize, setWindowSize] = useState<any>({
-    width: window.innerWidth,
-    height: window.innerHeight,
-  });
 
   const backBtn = () => {
     webViewRef.current.goBack();
@@ -70,47 +64,8 @@ const WebView = ({ data, show = false }: any) => {
     };
   }, []);
 
-  useEffect(() => {
-    if (sideBarExpanded) {
-      setWindowSize((prev: any) => {
-        return {
-          ...prev,
-          width: prev.width + 70 - 260,
-        };
-      });
-    }
-
-    if (windowSize.width === window.innerWidth + 70 - 260) {
-      setWindowSize((prev: any) => {
-        return {
-          ...prev,
-          width: prev.width + 190,
-        };
-      });
-    }
-
-    const handleResize = (e: any) => {
-      setWindowSize({
-        width: e.target.innerWidth,
-        height: e.target.innerHeight,
-      });
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [sideBarExpanded]);
-
   return (
-    <div
-      className="overflow-hidden flex flex-col relative md:pl-4 lg:pl-0"
-      style={{
-        display: show ? 'flex' : 'none',
-        width: `${windowSize.width - 70}px`,
-      }}
-    >
+    <>
       <section className="flex justify-between p-3 border-b-2">
         {/* left section  */}
         <div className="flex gap-2">
@@ -161,7 +116,7 @@ const WebView = ({ data, show = false }: any) => {
           height: '100%',
         }}
       ></webview>
-    </div>
+    </>
   );
 };
 

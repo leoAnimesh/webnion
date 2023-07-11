@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
-import WebView from './components/WebView';
+import WebView from './components/shared/WebView';
 import { useAppSelector } from './redux/hooks';
-import SideBar from './components/SideBar';
+import SideBar from './components/shared/SideBar';
 import ManageWorkspaceModal from './components/Modal/ManageWorkspaceModal';
+import MainWindowWrapper from './components/shared/MainWindowWrapper';
 
 interface WebView {
   id: string;
@@ -20,15 +21,16 @@ function App() {
       .filter((item) => item.active === true)
       .map((item: WebView, index: number) => {
         return (
-          <WebView
+          <MainWindowWrapper
+            key={index}
             show={
               workSpaces[currentWorkSpace]?.currentWebViewId === item.id
                 ? true
                 : false
             }
-            data={item}
-            key={index}
-          />
+          >
+            <WebView data={item} />
+          </MainWindowWrapper>
         );
       });
   }, [

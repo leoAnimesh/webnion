@@ -67,7 +67,7 @@ const ManageWebViewModal = ({ toggleModal }: any) => {
 
   return (
     <div
-      style={{ left: `${sideBarExpanded ? 260 : 70}px` }}
+      style={{ left: `${sideBarExpanded ? 258 : 68}px` }}
       className="absolute top-0 right-0 bottom-0 h-screen w-screen z-10  backdrop-blur-sm backdrop-opacity-2 flex justify-start items-center"
     >
       <div

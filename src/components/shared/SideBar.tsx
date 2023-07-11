@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { useEffect, useMemo, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   changeCurrentWebView,
   deleteWebAppEntry,
   toggleActivenessWebView,
   toggleManageWorkspaceModal,
   toggleSideBarExtended,
-} from '../redux/slices/WorkspaceSlice';
-import AddWebViewModal from './Modal/ManageWebViewModal';
+} from '../../redux/slices/WorkspaceSlice';
+import AddWebViewModal from '../Modal/ManageWebViewModal';
 import {
   RiExpandRightLine,
   RiExpandLeftLine,
@@ -28,17 +28,17 @@ const SideBar = () => {
   const dispatch = useAppDispatch();
   const [AddModalVisible, setAddModalVisible] = useState(false);
   const toggleModal = () => setAddModalVisible(!AddModalVisible);
-  const [activeViewsIndex, setActiveViewsIndex] = useState<number>(0);
   const { workSpaces, currentWorkSpace, sideBarExpanded } = useAppSelector(
     (state) => state.workspaceState
   );
+  let [interaction, setInteraction] = useState(0);
 
-  const changeWebView = (id: string, index: number) => {
-    setActiveViewsIndex(index);
+  const changeWebView = (id: string) => {
     dispatch(changeCurrentWebView({ id }));
   };
 
   const deactiveWebView = (id: string) => {
+    setInteraction((prev) => prev + 1);
     dispatch(
       toggleActivenessWebView({
         id: id,
@@ -52,16 +52,40 @@ const SideBar = () => {
   };
 
   const activateWebView = (id: string) => {
+    setInteraction((prev) => prev + 1);
     dispatch(toggleActivenessWebView({ id, active: true }));
   };
 
+  let activeTabs = useMemo(
+    () =>
+      workSpaces[currentWorkSpace].webViews.filter(
+        (item) => item.active === true
+      ),
+    [workSpaces[currentWorkSpace].webViews]
+  );
+
+  let inactiveTabs = useMemo(
+    () =>
+      workSpaces[currentWorkSpace].webViews.filter(
+        (item) => item.active === false
+      ),
+    [workSpaces[currentWorkSpace].webViews]
+  );
+
   useEffect(() => {
-    let arr = workSpaces[currentWorkSpace].webViews.filter(
-      (item) => item.active === true
-    );
-    if (arr.length >= 1 && activeViewsIndex !== 0) {
-      dispatch(changeCurrentWebView({ id: arr[activeViewsIndex - 1]?.id }));
+    if (interaction !== 0) {
+      dispatch(
+        changeCurrentWebView({
+          id: activeTabs[
+            workSpaces[currentWorkSpace].webViews.length -
+              inactiveTabs.length -
+              1
+          ]?.id,
+        })
+      );
     }
+
+    return setInteraction(0);
   }, [workSpaces[currentWorkSpace].webViews]);
 
   return (
@@ -96,21 +120,13 @@ const SideBar = () => {
             {/* <BsBrowserChrome className="text-2xl" /> */}
           </div>
         </div>
-        <p
-          className={`${
-            sideBarExpanded ? 'text-left px-2' : 'text-center'
-          } text-xs`}
-        >
-          {' '}
-          Active{' '}
-        </p>
         <hr />
         {/* active webviews */}
         {workSpaces[currentWorkSpace].webViews
           .filter((item) => item.active === true)
           .map((items: WebView, index: number) => (
             <div
-              onClick={() => changeWebView(items.id, index)}
+              onClick={() => changeWebView(items.id)}
               key={index}
               className={`border-2 ${
                 workSpaces[currentWorkSpace].currentWebViewId === items.id
@@ -149,19 +165,9 @@ const SideBar = () => {
               )}
             </div>
           ))}
-        <hr />
       </section>
       {/* sidebar bottom buttons  */}
       <section className="flex flex-col gap-2">
-        <hr />
-        <p
-          className={`${
-            sideBarExpanded ? 'text-left px-2' : 'text-center'
-          } text-xs`}
-        >
-          {' '}
-          Inactive{' '}
-        </p>
         <hr />
         {/* unactive web views  */}
         {workSpaces[currentWorkSpace].webViews

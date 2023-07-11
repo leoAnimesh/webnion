@@ -87,6 +87,7 @@ export const WorkspaceSlice = createSlice({
       action: PayloadAction<{ id: string; active: boolean }>
     ) => {
       const { id, active } = action.payload;
+
       return {
         ...state,
         workSpaces: {
