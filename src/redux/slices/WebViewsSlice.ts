@@ -36,18 +36,11 @@ export const webViewSlice = createSlice({
     changeCurrentWebView: (state, action: PayloadAction<{ id: string }>) => {
       state.currentWebViewId = action.payload.id;
     },
-    deleteWebAppEntry: (
-      state,
-      action: PayloadAction<{ id: string; index: number }>
-    ) => {
-      const { id, index } = action.payload;
+    deleteWebAppEntry: (state, action: PayloadAction<{ id: string }>) => {
+      const { id } = action.payload;
       return {
         ...state,
         webViews: [...state.webViews].filter((item) => item.id !== id),
-        currentWebViewId:
-          state.webViews.length >= 2
-            ? state.webViews[index + 1].id
-            : state.webViews[0].id,
       };
     },
     toggleActivenessWebView: (
@@ -57,7 +50,6 @@ export const webViewSlice = createSlice({
       const { id, active } = action.payload;
       return {
         ...state,
-        currentWebViewId: id,
         webViews: [...state.webViews].map((item) => {
           if (item.id === id) {
             return {

@@ -29,15 +29,7 @@ function App() {
   }, [currentWebViewId, webViews]);
 
   return (
-    <main
-      style={{
-        display: 'flex',
-        justifyContent: 'end',
-        flex: 1,
-        height: '100vh',
-        width: '100%',
-      }}
-    >
+    <main className="flex flex-1 justify-end h-screen w-full ">
       <SideBar />
       {renderWebViews}
     </main>
