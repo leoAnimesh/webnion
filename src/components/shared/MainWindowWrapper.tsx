@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAppSelector } from '../../redux/hooks';
 
 const MainWindowWrapper = ({ children, show = false }: any) => {
-  const { sideBarExpanded } = useAppSelector((state) => state.workspaceState);
+  const { sideBarExpanded } = useAppSelector((state) => state.conditionsState);
   const [windowSize, setWindowSize] = useState<any>({
     width: window.innerWidth,
     height: window.innerHeight,

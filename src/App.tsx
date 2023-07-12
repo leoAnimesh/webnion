@@ -24,6 +24,7 @@ function App() {
         if (index === 0) {
           return (
             <MainWindowWrapper
+              key={index}
               show={
                 workSpaces[currentWorkSpace]?.currentWebViewId === item.id
                   ? true

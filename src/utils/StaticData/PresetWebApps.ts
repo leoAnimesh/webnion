@@ -33,22 +33,27 @@ export const WebViewPresets = {
   ],
   'Google Apss': [
     {
-      id: 'b2725997-7cd9-4cf9-9f18-36ceadb26e81',
+      id: '9c666c13-f03e-451d-ba92-66d6e20cda3f',
+      name: 'Google',
+      url: 'https://google.com/',
+    },
+    {
+      id: 'dcb6c890-3f69-43ac-85ac-8b55d5d8c24a',
       name: 'Drive',
       url: 'https://drive.google.com/',
     },
     {
-      id: 'b2725997-7cd9-4cf9-9f18-36ceadb26e81',
+      id: 'f4d1bd2f-54c6-47d7-a25a-1b2ebfb29d07',
       name: 'Gmail',
       url: 'https://mail.google.com/',
     },
     {
-      id: 'b2725997-7cd9-4cf9-9f18-36ceadb26e81',
+      id: '00c479ff-d3e9-4fd8-8272-07d1a78b28e5',
       name: 'Photos',
       url: 'https://photos.google.com/',
     },
     {
-      id: 'b2725997-7cd9-4cf9-9f18-36ceadb26e81',
+      id: '856fb2df-a60f-4688-864d-76291f3ca714',
       name: 'Youtube',
       url: 'https://youtube.com/',
     },

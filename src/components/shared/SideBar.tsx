@@ -5,7 +5,6 @@ import {
   deleteWebAppEntry,
   toggleActivenessWebView,
   toggleManageWorkspaceModal,
-  toggleSideBarExtended,
 } from '../../redux/slices/WorkspaceSlice';
 import AddWebViewModal from '../Modal/ManageWebViewModal';
 import {
@@ -16,6 +15,7 @@ import {
 import { RxCross2 } from 'react-icons/rx';
 // import { BsBrowserChrome } from 'react-icons/bs';
 import { GiNightSleep } from 'react-icons/gi';
+import { togglesideBarExpanded } from '../../redux/slices/ConditonsSlice';
 
 interface WebView {
   id: string;
@@ -28,7 +28,8 @@ const SideBar = () => {
   const dispatch = useAppDispatch();
   const [AddModalVisible, setAddModalVisible] = useState(false);
   const toggleModal = () => setAddModalVisible(!AddModalVisible);
-  const { workSpaces, currentWorkSpace, sideBarExpanded } = useAppSelector(
+  const { sideBarExpanded } = useAppSelector((state) => state.conditionsState);
+  const { workSpaces, currentWorkSpace } = useAppSelector(
     (state) => state.workspaceState
   );
   let [interaction, setInteraction] = useState(0);
@@ -193,7 +194,7 @@ const SideBar = () => {
                   src={`http://www.google.com/s2/favicons?domain=${items.url}`}
                   alt="icon"
                 />
-                {sideBarExpanded && <p>{items.name}</p>}
+                {sideBarExpanded && <p className="capitalize">{items.name}</p>}
               </div>
               {/* web view item buttons  */}
               {sideBarExpanded && (
@@ -216,7 +217,7 @@ const SideBar = () => {
           {!sideBarExpanded && '+'}
         </button>
         <button
-          onClick={() => dispatch(toggleSideBarExtended())}
+          onClick={() => dispatch(togglesideBarExpanded(!sideBarExpanded))}
           className="border-2 hover:bg-gray-100 flex justify-center items-center text-white w-full h-12 rounded-lg text-3xl bold "
         >
           {sideBarExpanded && (

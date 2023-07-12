@@ -7,6 +7,7 @@ const WebView = ({ data }: any) => {
   let webViewRef = useRef<any>(null);
   const [currentURL, setCurrentURL] = useState(data.url);
   const [loading, setLoading] = useState(true);
+  const [interaction, setIneration] = useState(0);
 
   const backBtn = () => {
     webViewRef.current.goBack();
@@ -33,9 +34,10 @@ const WebView = ({ data }: any) => {
       setLoading(loading);
     };
 
-    webViewRef?.current?.addEventListener('did-stop-loading', () =>
-      handleLoading(false)
-    );
+    webViewRef?.current?.addEventListener('did-stop-loading', () => {
+      handleLoading(false);
+    });
+
     webViewRef?.current?.addEventListener('did-start-loading', () =>
       handleLoading(true)
     );
@@ -63,6 +65,17 @@ const WebView = ({ data }: any) => {
       );
     };
   }, []);
+
+  useEffect(() => {
+    if (
+      loading === false &&
+      interaction === 0 &&
+      data.url === 'https://web.whatsapp.com'
+    ) {
+      webViewRef?.current?.reloadIgnoringCache();
+      setIneration(1);
+    }
+  }, [loading]);
 
   return (
     <>
@@ -93,7 +106,11 @@ const WebView = ({ data }: any) => {
               ></div>
             )}
           </div>
-          <input disabled className="text-center text-sm " value={currentURL} />
+          <input
+            disabled
+            className="text-center text-sm w-full"
+            value={currentURL}
+          />
           <TfiReload className="mx-2 cursor-pointer" onClick={reloadWindow} />
         </div>
 
@@ -110,6 +127,7 @@ const WebView = ({ data }: any) => {
       <webview
         ref={webViewRef}
         src={data?.url}
+        useragent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
         partition={`persist:webx}`}
         style={{
           width: '100%',

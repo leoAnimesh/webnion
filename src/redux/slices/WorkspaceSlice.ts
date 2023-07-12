@@ -6,6 +6,7 @@ interface WebView {
   name: string;
   url: string;
   active: boolean;
+  pinned?: boolean;
 }
 
 interface WorkspaceDetails {
@@ -22,7 +23,6 @@ interface WorkSpaces {
   workSpaces: {
     [key: string]: Workspace;
   };
-  sideBarExpanded: boolean;
   showWorkspaceModal: boolean;
   currentWorkSpace: string;
 }
@@ -44,7 +44,6 @@ const initialState: WorkSpaces = {
       currentWebViewId: '03220916-6c71-4d83-9545-487d09e8bc87',
     },
   },
-  sideBarExpanded: false,
   showWorkspaceModal: false,
   currentWorkSpace: 'default',
 };
@@ -76,9 +75,6 @@ export const WorkspaceSlice = createSlice({
           },
         },
       };
-    },
-    toggleSideBarExtended: (state) => {
-      state.sideBarExpanded = !state.sideBarExpanded;
     },
     toggleActivenessWebView: (
       state,
@@ -133,6 +129,33 @@ export const WorkspaceSlice = createSlice({
       state.currentWorkSpace = name;
       state.showWorkspaceModal = false;
     },
+    togglepinWebAppToWorkspace: (
+      state,
+      action: PayloadAction<{ id: string; pinned: boolean }>
+    ) => {
+      const { id, pinned } = action.payload;
+
+      return {
+        ...state,
+        workSpaces: {
+          ...state.workSpaces,
+          [state.currentWorkSpace]: {
+            ...state.workSpaces[state.currentWorkSpace],
+            webViews: [
+              ...state.workSpaces[state.currentWorkSpace].webViews,
+            ].map((item) => {
+              if (item.id === id) {
+                return {
+                  ...item,
+                  pinned: pinned,
+                };
+              }
+              return item;
+            }),
+          },
+        },
+      };
+    },
     switchWorkSpace: (state, action: PayloadAction<{ name: string }>) => {
       const { name } = action.payload;
       state.currentWorkSpace = name;
@@ -149,7 +172,7 @@ export const {
   toggleManageWorkspaceModal,
   addWorkSpace,
   switchWorkSpace,
-  toggleSideBarExtended,
+  togglepinWebAppToWorkspace,
 } = WorkspaceSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
