@@ -5,8 +5,7 @@ interface WebView {
   id: string;
   name: string;
   url: string;
-  active: boolean;
-  pinned?: boolean;
+  pinned: boolean;
 }
 
 interface WorkspaceDetails {
@@ -15,6 +14,11 @@ interface WorkspaceDetails {
 
 interface Workspace {
   workspaceDetails: WorkspaceDetails;
+  WorkspaceMenu: {
+    id: string;
+    name: string;
+  };
+  webViewsObj: { [key: string]: string };
   webViews: WebView[];
   currentWebViewId: string;
 }
@@ -33,14 +37,12 @@ const initialState: WorkSpaces = {
       workspaceDetails: {
         emoji: '🌐',
       },
-      webViews: [
-        {
-          id: '03220916-6c71-4d83-9545-487d09e8bc87',
-          name: 'WebApps Menu',
-          url: '',
-          active: true,
-        },
-      ],
+      WorkspaceMenu: {
+        id: '03220916-6c71-4d83-9545-487d09e8bc87',
+        name: 'WebApps Menu',
+      },
+      webViewsObj: {},
+      webViews: [],
       currentWebViewId: '03220916-6c71-4d83-9545-487d09e8bc87',
     },
   },
@@ -53,58 +55,47 @@ export const WorkspaceSlice = createSlice({
   initialState,
   reducers: {
     addWebView: (state, action: PayloadAction<WebView>) => {
-      state.workSpaces[state.currentWorkSpace].currentWebViewId =
-        action.payload.id;
-      state.workSpaces[state.currentWorkSpace].webViews.push(action.payload);
+      const data = action.payload;
+      state.workSpaces[state.currentWorkSpace].currentWebViewId = data.id;
+      state.workSpaces[state.currentWorkSpace].webViewsObj[data.url] = data.id;
+      state.workSpaces[state.currentWorkSpace].webViews.push(data);
     },
-    changeCurrentWebView: (state, action: PayloadAction<{ id: string }>) => {
+    changeCurrentWebView: (state, action: PayloadAction<{ id: any }>) => {
       const { id } = action.payload;
       state.workSpaces[state.currentWorkSpace].currentWebViewId = id;
     },
     deleteWebAppEntry: (state, action: PayloadAction<{ id: string }>) => {
       const { id } = action.payload;
-      return {
-        ...state,
-        workSpaces: {
-          ...state.workSpaces,
-          [state.currentWorkSpace]: {
-            ...state.workSpaces[state.currentWorkSpace],
-            webViews: [
-              ...state.workSpaces[state.currentWorkSpace].webViews,
-            ].filter((item) => item.id !== id),
-          },
-        },
-      };
-    },
-    toggleActivenessWebView: (
-      state,
-      action: PayloadAction<{ id: string; active: boolean }>
-    ) => {
-      const { id, active } = action.payload;
-
-      return {
-        ...state,
-        workSpaces: {
-          ...state.workSpaces,
-          [state.currentWorkSpace]: {
-            ...state.workSpaces[state.currentWorkSpace],
-            webViews: [
-              ...state.workSpaces[state.currentWorkSpace].webViews,
-            ].map((item) => {
-              if (item.id === id) {
-                return {
-                  ...item,
-                  active: active,
-                };
-              }
-              return item;
-            }),
-          },
-        },
-      };
+      let filterData = state.workSpaces[state.currentWorkSpace].webViews.filter(
+        (item) => item.id !== id
+      );
+      state.workSpaces[state.currentWorkSpace].webViews = [...filterData];
     },
     toggleManageWorkspaceModal: (state) => {
       state.showWorkspaceModal = !state.showWorkspaceModal;
+    },
+    togglePinned: (
+      state,
+      action: PayloadAction<{ id: string; pinned: boolean }>
+    ) => {
+      const { id, pinned } = action.payload;
+      const { workSpaces, currentWorkSpace } = state;
+      let updatedData = workSpaces[currentWorkSpace].webViews.map((item) => {
+        if (item.id === id) {
+          return { ...item, pinned };
+        }
+        return item;
+      });
+      updatedData.sort((a, b) => {
+        if (a.pinned && !b.pinned) {
+          return -1; // a comes before b
+        } else if (!a.pinned && b.pinned) {
+          return 1; // b comes before a
+        } else {
+          return 0; // the order remains unchanged
+        }
+      });
+      state.workSpaces[currentWorkSpace].webViews = [...updatedData];
     },
     addWorkSpace: (
       state,
@@ -116,45 +107,16 @@ export const WorkspaceSlice = createSlice({
         workspaceDetails: {
           emoji,
         },
-        webViews: [
-          {
-            id,
-            name: 'WebApps Menu',
-            url: '',
-            active: true,
-          },
-        ],
+        WorkspaceMenu: {
+          id: id,
+          name: 'WebApps Menu',
+        },
+        webViewsObj: {},
+        webViews: [],
         currentWebViewId: id,
       };
       state.currentWorkSpace = name;
       state.showWorkspaceModal = false;
-    },
-    togglepinWebAppToWorkspace: (
-      state,
-      action: PayloadAction<{ id: string; pinned: boolean }>
-    ) => {
-      const { id, pinned } = action.payload;
-
-      return {
-        ...state,
-        workSpaces: {
-          ...state.workSpaces,
-          [state.currentWorkSpace]: {
-            ...state.workSpaces[state.currentWorkSpace],
-            webViews: [
-              ...state.workSpaces[state.currentWorkSpace].webViews,
-            ].map((item) => {
-              if (item.id === id) {
-                return {
-                  ...item,
-                  pinned: pinned,
-                };
-              }
-              return item;
-            }),
-          },
-        },
-      };
     },
     switchWorkSpace: (state, action: PayloadAction<{ name: string }>) => {
       const { name } = action.payload;
@@ -167,12 +129,11 @@ export const WorkspaceSlice = createSlice({
 export const {
   addWebView,
   changeCurrentWebView,
-  toggleActivenessWebView,
   deleteWebAppEntry,
   toggleManageWorkspaceModal,
   addWorkSpace,
   switchWorkSpace,
-  togglepinWebAppToWorkspace,
+  togglePinned,
 } = WorkspaceSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type

@@ -18,44 +18,23 @@ function App() {
   );
 
   const renderWebViews = useMemo(() => {
-    return workSpaces[currentWorkSpace]?.webViews
-      .filter((item) => item.active === true)
-      .map((item: WebView, index: number) => {
-        if (index === 0) {
-          return (
-            <MainWindowWrapper
-              key={index}
-              show={
-                workSpaces[currentWorkSpace]?.currentWebViewId === item.id
-                  ? true
-                  : false
-              }
-            >
-              <WorkspaceHome />
-            </MainWindowWrapper>
-          );
-        }
+    return workSpaces[currentWorkSpace].webViews.map(
+      (item: WebView, index: number) => {
         return (
-          <MainWindowWrapper
-            key={index}
-            show={
-              workSpaces[currentWorkSpace]?.currentWebViewId === item.id
-                ? true
-                : false
-            }
-          >
+          <MainWindowWrapper id={item.id} key={index}>
             <WebView data={item} />
           </MainWindowWrapper>
         );
-      });
-  }, [
-    workSpaces[currentWorkSpace].currentWebViewId,
-    workSpaces[currentWorkSpace]?.webViews,
-  ]);
+      }
+    );
+  }, [workSpaces[currentWorkSpace].webViews]);
 
   return (
     <main className="flex flex-1 justify-end h-screen w-full ">
       <SideBar />
+      <MainWindowWrapper id={workSpaces[currentWorkSpace].WorkspaceMenu.id}>
+        <WorkspaceHome />
+      </MainWindowWrapper>
       {renderWebViews}
       {showWorkspaceModal && <ManageWorkspaceModal />}
     </main>

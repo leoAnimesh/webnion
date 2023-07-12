@@ -9,15 +9,16 @@ import { toggleAddWenViewModal } from '../../redux/slices/ConditonsSlice';
 
 const ManageWebViewModal = ({ toggleModal }: any) => {
   const { sideBarExpanded } = useAppSelector((state) => state.conditionsState);
+  const { workSpaces, currentWorkSpace } = useAppSelector(
+    (state) => state.workspaceState
+  );
   const dispatch = useAppDispatch();
   const [formData, setFormData] = useState<{
     name: string;
     url: string;
-    pinned: boolean;
   }>({
     name: '',
     url: 'https://',
-    pinned: false,
   });
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,15 +32,24 @@ const ManageWebViewModal = ({ toggleModal }: any) => {
   const onSubmit = (e: any) => {
     e.preventDefault();
     let id = uuid();
-    dispatch(
-      addWebView({ ...formData, id, pinned: formData.pinned, active: true })
-    );
+    console.log(workSpaces[currentWorkSpace].webViewsObj);
+
+    if (workSpaces[currentWorkSpace].webViewsObj.hasOwnProperty(formData.url)) {
+      window.alert('already presen in current workspace ');
+      return;
+    }
+    dispatch(addWebView({ ...formData, pinned: false, id }));
     toggleModal();
   };
 
   const addPresentToWorkspace = (webApp: any) => {
     let id = uuid();
-    dispatch(addWebView({ ...webApp, id, pinned: false, active: true }));
+    console.log(workSpaces[currentWorkSpace].webViewsObj);
+    if (workSpaces[currentWorkSpace].webViewsObj.hasOwnProperty(webApp.url)) {
+      window.alert('already presen in current workspace ');
+      return;
+    }
+    dispatch(addWebView({ ...webApp, id, pinned: false }));
     dispatch(toggleAddWenViewModal());
   };
 
@@ -114,17 +124,6 @@ const ManageWebViewModal = ({ toggleModal }: any) => {
           placeholder="Name of WebApp"
           name="name"
         />
-        <div className="flex items-center gap-3">
-          <input
-            checked={formData.pinned}
-            onChange={(e) =>
-              setFormData({ ...formData, pinned: e.target.checked })
-            }
-            name="pinnned"
-            type="checkbox"
-          />
-          <p>Pin to Sidebar</p>
-        </div>
         <button
           type="submit"
           className="bg-blue-500 py-2 w-full rounded-md text-white"

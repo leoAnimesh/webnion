@@ -1,4 +1,4 @@
-import { app, session, BrowserWindow } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
 
 // The built directory structure
@@ -30,18 +30,8 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
       partition: 'persist:webx',
       webviewTag: true,
+      plugins: true,
     },
-  });
-
-  const defaultSession = session.defaultSession;
-
-  // Enable popups within the WebView
-  defaultSession.setPermissionRequestHandler((_, permission, callback) => {
-    if (permission === 'openExternal') {
-      callback(true);
-    } else {
-      callback(false);
-    }
   });
 
   // Test active push message to Renderer-process.
