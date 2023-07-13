@@ -5,8 +5,11 @@ Multi-web desktop application, application to manage web apps with ease no needs
 - [x] Create multple Web Apps
 - [x] seperate web app controls
 - [x] Workspace management
+- [x] Workspace notes
+- [x] normal web suring too
 - [ ] Taking notes directly in the Main app from any webpp
-- [ ] Think of more features
+- [ ] clipboard history
+- [ ] dark mode
 
 ## Dev Setup
 
