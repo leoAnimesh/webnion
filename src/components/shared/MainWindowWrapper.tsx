@@ -1,12 +1,25 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, ReactNode } from 'react';
 import { useAppSelector } from '../../redux/hooks';
 
-const MainWindowWrapper = ({ children, id }: any) => {
+interface MainWindowWrapperProps {
+  children: ReactNode;
+  id: string;
+}
+
+interface windowSizeType {
+  width: number;
+  height: number;
+}
+
+const MainWindowWrapper: React.FC<MainWindowWrapperProps> = ({
+  children,
+  id,
+}) => {
   const { sideBarExpanded } = useAppSelector((state) => state.conditionsState);
   const { workSpaces, currentWorkSpace } = useAppSelector(
     (state) => state.workspaceState
   );
-  const [windowSize, setWindowSize] = useState<any>({
+  const [windowSize, setWindowSize] = useState<windowSizeType>({
     width: window.innerWidth,
     height: window.innerHeight,
   });

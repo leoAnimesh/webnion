@@ -2,8 +2,9 @@ import { useRef, useEffect, useState } from 'react';
 import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
 import { GoTools } from 'react-icons/go';
 import { TfiReload } from 'react-icons/tfi';
+import { WebViewData } from '../../types/workspaceDataTypes';
 
-const WebView = ({ data }: any) => {
+const WebView: React.FC<{ data: WebViewData }> = ({ data }) => {
   const ispopupsAllowed = 'true' as any;
   let webViewRef = useRef<any>(null);
   const [currentURL, setCurrentURL] = useState(data.url);

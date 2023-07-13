@@ -17,7 +17,7 @@ const persistConfig = {
   key: 'root',
   version: 1,
   storage,
-  whitelist: [],
+  whitelist: ['workspaceState'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

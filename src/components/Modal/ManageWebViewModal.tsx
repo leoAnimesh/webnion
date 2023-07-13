@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { addWebView } from '../../redux/slices/WorkspaceSlice';
@@ -7,16 +7,24 @@ import { RiAddCircleLine, RiCloseLine } from 'react-icons/ri';
 import ModalContainer from './ModalContainer';
 import { toggleAddWenViewModal } from '../../redux/slices/ConditonsSlice';
 
-const ManageWebViewModal = ({ toggleModal }: any) => {
+interface ManageWebViewModalProps {
+  toggleModal: () => void;
+}
+
+interface formDataType {
+  name: string;
+  url: string;
+}
+
+const ManageWebViewModal: React.FC<ManageWebViewModalProps> = ({
+  toggleModal,
+}) => {
   const { sideBarExpanded } = useAppSelector((state) => state.conditionsState);
   const { workSpaces, currentWorkSpace } = useAppSelector(
     (state) => state.workspaceState
   );
   const dispatch = useAppDispatch();
-  const [formData, setFormData] = useState<{
-    name: string;
-    url: string;
-  }>({
+  const [formData, setFormData] = useState<formDataType>({
     name: '',
     url: 'https://',
   });
@@ -29,7 +37,7 @@ const ManageWebViewModal = ({ toggleModal }: any) => {
     });
   };
 
-  const onSubmit = (e: any) => {
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     let id = uuid();
     console.log(workSpaces[currentWorkSpace].webViewsObj);
@@ -42,7 +50,11 @@ const ManageWebViewModal = ({ toggleModal }: any) => {
     toggleModal();
   };
 
-  const addPresentToWorkspace = (webApp: any) => {
+  const addPresentToWorkspace = (webApp: {
+    id: string;
+    name: string;
+    url: string;
+  }) => {
     let id = uuid();
     console.log(workSpaces[currentWorkSpace].webViewsObj);
     if (workSpaces[currentWorkSpace].webViewsObj.hasOwnProperty(webApp.url)) {
@@ -74,7 +86,7 @@ const ManageWebViewModal = ({ toggleModal }: any) => {
         NAME = splited_url[0];
       }
 
-      setFormData((prev: any): any => {
+      setFormData((prev: formDataType): formDataType => {
         return {
           ...prev,
           name: NAME,
@@ -82,7 +94,7 @@ const ManageWebViewModal = ({ toggleModal }: any) => {
       });
     } else {
       if (formData.url === '') {
-        setFormData((prev: any): any => {
+        setFormData((prev: formDataType): formDataType => {
           return {
             ...prev,
             name: '',

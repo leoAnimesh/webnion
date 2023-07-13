@@ -24,7 +24,11 @@ const WorkspaceHome = () => {
     dispatch(togglePinned({ id, pinned }));
   };
 
-  const addPresentToWorkspace = (webApp: any) => {
+  const addPresentToWorkspace = (webApp: {
+    name: string;
+    url: string;
+    id: string;
+  }) => {
     if (workSpaces[currentWorkSpace].webViewsObj.hasOwnProperty(webApp.url)) {
       window.alert('already presen in current workspace ');
       return;

@@ -9,21 +9,26 @@ import { RiCloseLine } from 'react-icons/ri';
 import ModalContainer from './ModalContainer';
 import { useNavigate } from 'react-router-dom';
 
+interface formDataType {
+  workspaceName: string;
+  workspaceEmoji: string;
+}
+
 const ManageWorkspaceModal = () => {
   const dispatch = useAppDispatch();
   const navigation = useNavigate();
   const { workSpaces, currentWorkSpace } = useAppSelector(
     (state) => state.workspaceState
   );
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<formDataType>({
     workspaceName: '',
     workspaceEmoji: '',
   });
   const [showInputs, setShowInput] = useState<boolean>(false);
 
-  const handleFromDataChange = (e: any) => {
+  const handleFromDataChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev): any => {
+    setFormData((prev: formDataType): formDataType => {
       return {
         ...prev,
         [name]: value,
@@ -36,7 +41,7 @@ const ManageWorkspaceModal = () => {
     navigation(`/${key}`);
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(
       addWorkSpace({

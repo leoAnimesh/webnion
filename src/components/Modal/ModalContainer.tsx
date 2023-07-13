@@ -1,20 +1,27 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, ReactNode } from 'react';
 
-const ModalContainer = ({
+interface ModalContainerProps {
+  children: ReactNode;
+  toggleModal: () => void;
+  outerContainerStyles: { [key: string]: string | number };
+  innerContainerStyles: { [key: string]: string | number };
+}
+
+const ModalContainer: React.FC<ModalContainerProps> = ({
   children,
   toggleModal,
   outerContainerStyles,
   innerContainerStyles,
-}: any) => {
-  let modalRef = useRef<any>();
+}) => {
+  let modalRef = useRef<HTMLDivElement>(null);
 
-  const handleClickOutside = (event: any) => {
-    if (modalRef.current && !modalRef.current.contains(event.target)) {
+  const handleClickOutside = ({ target }: MouseEvent) => {
+    if (modalRef.current && !modalRef.current.contains(target as Node)) {
       toggleModal();
     }
   };
 
-  const handleESCKeyPress = (e: any) => {
+  const handleESCKeyPress = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       toggleModal();
     }

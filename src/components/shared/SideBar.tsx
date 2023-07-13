@@ -18,13 +18,7 @@ import {
 } from '../../redux/slices/ConditonsSlice';
 import { BiPin } from 'react-icons/bi';
 import { useEffect, useRef } from 'react';
-
-interface WebView {
-  id: string;
-  name: string;
-  url: string;
-  pinned: boolean;
-}
+import { WebViewData } from '../../types/workspaceDataTypes';
 
 const SideBar = () => {
   const dispatch = useAppDispatch();
@@ -40,15 +34,15 @@ const SideBar = () => {
     dispatch(changeCurrentWebView({ id }));
   };
 
-  let sidebarRef = useRef<any>();
+  let sidebarRef = useRef<HTMLDivElement>(null);
 
-  const handleClickOutside = (event: any) => {
-    if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+  const handleClickOutside = ({ target }: MouseEvent) => {
+    if (sidebarRef.current && !sidebarRef.current.contains(target as Node)) {
       dispatch(togglesideBarExpanded(false));
     }
   };
 
-  const handleESCKeyPress = (e: any) => {
+  const handleESCKeyPress = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       dispatch(togglesideBarExpanded(false));
     }
@@ -126,7 +120,7 @@ const SideBar = () => {
 
         {/* active webviews */}
         {workSpaces[currentWorkSpace].webViews.map(
-          (items: WebView, index: number) => (
+          (items: WebViewData, index: number) => (
             <div
               onClick={() => changeWebView(items.id)}
               key={index}

@@ -1,37 +1,8 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-// import type { RootState } from '../store';
 import { v4 as uuid } from 'uuid';
-interface WebView {
-  id: string;
-  name: string;
-  url: string;
-  pinned: boolean;
-}
+import { WebViewData, WorkSpacesType } from '../../types/workspaceDataTypes';
 
-interface WorkspaceDetails {
-  emoji: string;
-}
-
-interface Workspace {
-  workspaceDetails: WorkspaceDetails;
-  WorkspaceMenu: {
-    id: string;
-    name: string;
-  };
-  webViewsObj: { [key: string]: string };
-  webViews: WebView[];
-  currentWebViewId: string;
-}
-
-interface WorkSpaces {
-  workSpaces: {
-    [key: string]: Workspace;
-  };
-  showWorkspaceModal: boolean;
-  currentWorkSpace: string;
-}
-
-const initialState: WorkSpaces = {
+const initialState: WorkSpacesType = {
   workSpaces: {
     default: {
       workspaceDetails: {
@@ -54,13 +25,13 @@ export const WorkspaceSlice = createSlice({
   name: 'webViews',
   initialState,
   reducers: {
-    addWebView: (state, action: PayloadAction<WebView>) => {
+    addWebView: (state, action: PayloadAction<WebViewData>) => {
       const data = action.payload;
       state.workSpaces[state.currentWorkSpace].currentWebViewId = data.id;
       state.workSpaces[state.currentWorkSpace].webViewsObj[data.url] = data.id;
       state.workSpaces[state.currentWorkSpace].webViews.push(data);
     },
-    changeCurrentWebView: (state, action: PayloadAction<{ id: any }>) => {
+    changeCurrentWebView: (state, action: PayloadAction<{ id: string }>) => {
       const { id } = action.payload;
       state.workSpaces[state.currentWorkSpace].currentWebViewId = id;
     },
@@ -92,11 +63,11 @@ export const WorkspaceSlice = createSlice({
       });
       updatedData.sort((a, b) => {
         if (a.pinned && !b.pinned) {
-          return -1; // a comes before b
+          return -1;
         } else if (!a.pinned && b.pinned) {
-          return 1; // b comes before a
+          return 1;
         } else {
-          return 0; // the order remains unchanged
+          return 0;
         }
       });
       state.workSpaces[currentWorkSpace].webViews = [...updatedData];
@@ -139,8 +110,5 @@ export const {
   switchWorkSpace,
   togglePinned,
 } = WorkspaceSlice.actions;
-
-// Other code such as selectors can use the imported `RootState` type
-// export const selectCount = (state: RootState) => state.webviews.value
 
 export default WorkspaceSlice.reducer;
