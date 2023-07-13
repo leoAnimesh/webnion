@@ -10,6 +10,7 @@ const MainWindowWrapper = ({ children, id }: any) => {
     width: window.innerWidth,
     height: window.innerHeight,
   });
+
   useEffect(() => {
     const handleResize = (e: any) => {
       setWindowSize({
@@ -36,6 +37,7 @@ const MainWindowWrapper = ({ children, id }: any) => {
             ? 'flex'
             : 'none',
         width: `${windowSize.width - 70}px`,
+        height: '100%',
       }}
     >
       {children}

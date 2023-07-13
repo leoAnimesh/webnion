@@ -1,4 +1,4 @@
-import { useRef, memo, useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
 import { GoTools } from 'react-icons/go';
 import { TfiReload } from 'react-icons/tfi';
@@ -7,25 +7,36 @@ const WebView = ({ data }: any) => {
   let webViewRef = useRef<any>(null);
   const [currentURL, setCurrentURL] = useState(data.url);
   const [loading, setLoading] = useState(true);
-  const [interaction, setIneration] = useState(0);
+  const [webViewElement, setWebViewElement] = useState<any>(null);
 
   const backBtn = () => {
-    webViewRef.current.goBack();
+    webViewElement.goBack();
   };
 
   const forwardBtn = () => {
-    webViewRef.current.goForward();
+    webViewElement.goForward();
   };
 
   const reloadWindow = () => {
-    webViewRef.current.reloadIgnoringCache();
+    webViewElement.reloadIgnoringCache();
   };
 
   const openDevTools = () => {
-    webViewRef.current.openDevTools();
+    webViewElement.openDevTools();
   };
 
   useEffect(() => {
+    const myElement = document.createElement('webview');
+    myElement.src = data.url;
+    myElement.style.width = '100%';
+    myElement.style.height = '94.5vh';
+    myElement.allowpopups = true;
+    myElement.partition = 'persist:webx';
+    myElement.plugins = true;
+
+    webViewRef.current.appendChild(myElement);
+    setWebViewElement(myElement);
+
     const handleNavigation = (e: any) => {
       setCurrentURL(e.url);
     };
@@ -34,48 +45,32 @@ const WebView = ({ data }: any) => {
       setLoading(loading);
     };
 
-    webViewRef?.current?.addEventListener('did-stop-loading', () => {
+    myElement.addEventListener('did-stop-loading', () => {
       handleLoading(false);
     });
-
-    webViewRef?.current?.addEventListener('did-start-loading', () =>
-      handleLoading(true)
-    );
-    webViewRef?.current?.addEventListener('did-navigate', handleNavigation);
-
-    webViewRef?.current?.addEventListener(
-      'did-navigate-in-page',
-      handleNavigation
-    );
+    myElement.addEventListener('did-start-loading', () => handleLoading(true));
+    myElement.addEventListener('did-navigate', handleNavigation);
+    myElement.addEventListener('did-navigate-in-page', handleNavigation);
+    myElement.addEventListener('dom-ready', () => {
+      if (data.url === 'https://web.whatsapp.com') {
+        myElement.setUserAgent(
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36'
+        );
+      }
+      console.log('web view is ready');
+    });
 
     return () => {
-      webViewRef?.current?.removeEventListener(
-        'did-navigate-in-page',
-        handleNavigation
-      );
-      webViewRef?.current?.removeEventListener(
-        'did-navigate',
-        handleNavigation
-      );
-      webViewRef?.current?.removeEventListener('did-stop-loading', () =>
+      myElement.removeEventListener('did-navigate-in-page', handleNavigation);
+      myElement.removeEventListener('did-navigate', handleNavigation);
+      myElement.removeEventListener('did-stop-loading', () =>
         handleLoading(false)
       );
-      webViewRef?.current?.removeEventListener('did-start-loading', () =>
+      myElement.removeEventListener('did-start-loading', () =>
         handleLoading(false)
       );
     };
   }, []);
-
-  useEffect(() => {
-    if (
-      loading === false &&
-      interaction === 0 &&
-      data.url === 'https://web.whatsapp.com'
-    ) {
-      webViewRef?.current?.reloadIgnoringCache();
-      setIneration(1);
-    }
-  }, [loading]);
 
   return (
     <>
@@ -124,19 +119,21 @@ const WebView = ({ data }: any) => {
           </div>
         </div>
       </section>
-      <webview
+      <div ref={webViewRef} />
+      {/* <webview
         ref={webViewRef}
         src={data.url}
-        allowpopups={true}
+        allowpopups
+        webpreferences="nativeWindowOpen=true"
         useragent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
         partition={`persist:webx}`}
         style={{
           width: '100%',
           height: '100%',
         }}
-      ></webview>
+      /> */}
     </>
   );
 };
 
-export default memo(WebView);
+export default WebView;

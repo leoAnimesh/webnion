@@ -7,9 +7,11 @@ import {
 } from '../../redux/slices/WorkspaceSlice';
 import { RiCloseLine } from 'react-icons/ri';
 import ModalContainer from './ModalContainer';
+import { useNavigate } from 'react-router-dom';
 
 const ManageWorkspaceModal = () => {
   const dispatch = useAppDispatch();
+  const navigation = useNavigate();
   const { workSpaces, currentWorkSpace } = useAppSelector(
     (state) => state.workspaceState
   );
@@ -27,6 +29,11 @@ const ManageWorkspaceModal = () => {
         [name]: value,
       };
     });
+  };
+
+  const chanegWorkspace = (key: string) => {
+    dispatch(switchWorkSpace({ name: key }));
+    navigation(`/${key}`);
   };
 
   const handleSubmit = (e: any) => {
@@ -52,7 +59,7 @@ const ManageWorkspaceModal = () => {
         {Object.entries(workSpaces).map(([key, value], index) => (
           <div
             key={index}
-            onClick={() => dispatch(switchWorkSpace({ name: key }))}
+            onClick={() => chanegWorkspace(key)}
             className={`${
               currentWorkSpace === key
                 ? 'border-blue-400'

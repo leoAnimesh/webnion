@@ -30,7 +30,6 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
       partition: 'persist:webx',
       webviewTag: true,
-      plugins: true,
     },
   });
 
