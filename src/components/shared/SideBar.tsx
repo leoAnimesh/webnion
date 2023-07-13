@@ -175,10 +175,10 @@ const SideBar = () => {
         <button
           disabled={showAddWenViewModal}
           onClick={toggleModal}
-          className="border-2 flex items-center justify-center bg-blue-500 hover:bg-blue-400 text-white w-full h-12 rounded-lg text-3xl bold "
+          className="border-2 flex items-center justify-center bg-blue-500 hover:bg-blue-400  text-white w-full h-12 rounded-lg text-3xl bold "
         >
-          {sideBarExpanded && <p className="text-sm">Add New WebApp</p>}{' '}
-          {!sideBarExpanded && <p>+</p>}
+          {sideBarExpanded && <p className="text-sm ">Add New WebApp</p>}{' '}
+          {!sideBarExpanded && <p className="pointer-events-none">+</p>}
         </button>
         {/* expand button  */}
         {/* <button

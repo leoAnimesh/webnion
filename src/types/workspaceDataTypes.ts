@@ -27,3 +27,15 @@ export interface WorkSpacesType {
   showWorkspaceModal: boolean;
   currentWorkSpace: string;
 }
+
+export interface WorkSpaceTodos {
+  todo: string;
+  id: string;
+  date: Date;
+  done: boolean;
+  completedAt: Date | string;
+}
+
+export interface WorkSpaceDataType {
+  workSpaceData: { [key: string]: { todos: WorkSpaceTodos[] } };
+}

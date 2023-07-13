@@ -33,11 +33,6 @@ export const WebViewPresets = {
   ],
   'Google Apss': [
     {
-      id: '9c666c13-f03e-451d-ba92-66d6e20cda3f',
-      name: 'Google',
-      url: 'https://google.com/',
-    },
-    {
       id: 'dcb6c890-3f69-43ac-85ac-8b55d5d8c24a',
       name: 'Drive',
       url: 'https://drive.google.com/',

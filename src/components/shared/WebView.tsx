@@ -3,15 +3,24 @@ import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
 import { GoTools } from 'react-icons/go';
 import { TfiReload } from 'react-icons/tfi';
 import { WebViewData } from '../../types/workspaceDataTypes';
+import { RiCloseFill } from 'react-icons/ri';
 
-const WebView: React.FC<{ data: WebViewData }> = ({ data }) => {
+const WebView: React.FC<{ data: WebViewData; close?: () => void }> = ({
+  data,
+  close,
+}) => {
   const ispopupsAllowed = 'true' as any;
   let webViewRef = useRef<any>(null);
   const [currentURL, setCurrentURL] = useState(data.url);
   const [loading, setLoading] = useState(true);
 
   const backBtn = () => {
-    webViewRef.current.goBack();
+    if (webViewRef.current.canGoBack()) {
+      webViewRef.current.goBack();
+    }
+    if (close) {
+      close();
+    }
   };
 
   const forwardBtn = () => {
@@ -109,12 +118,21 @@ const WebView: React.FC<{ data: WebViewData }> = ({ data }) => {
 
         {/* right section  */}
         <div className="flex gap-2">
-          <div
-            className="border-2  p-1 cursor-pointer rounded-md"
-            onClick={openDevTools}
-          >
-            <GoTools />
-          </div>
+          {close ? (
+            <div
+              className="border-2  p-1 cursor-pointer rounded-md"
+              onClick={close}
+            >
+              <RiCloseFill />
+            </div>
+          ) : (
+            <div
+              className="border-2  p-1 cursor-pointer rounded-md"
+              onClick={openDevTools}
+            >
+              <GoTools />
+            </div>
+          )}
         </div>
       </section>
       <webview
