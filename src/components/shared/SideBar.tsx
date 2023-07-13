@@ -2,15 +2,14 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   changeCurrentWebView,
   toggleManageWorkspaceModal,
-  togglePinned,
 } from '../../redux/slices/WorkspaceSlice';
 import AddWebViewModal from '../Modal/ManageWebViewModal';
-import {
-  RiExpandRightLine,
-  RiExpandLeftLine,
-  RiPushpinLine,
-  RiUnpinLine,
-} from 'react-icons/ri';
+// import {
+//   RiExpandRightLine,
+//   RiExpandLeftLine,
+//   RiPushpinLine,
+//   RiUnpinLine,
+// } from 'react-icons/ri';
 
 // import { BsBrowserChrome } from 'react-icons/bs';
 import {
@@ -39,10 +38,6 @@ const SideBar = () => {
 
   const changeWebView = (id: string) => {
     dispatch(changeCurrentWebView({ id }));
-  };
-
-  const togglePins = (id: string, pinned: boolean) => {
-    dispatch(togglePinned({ id, pinned }));
   };
 
   let sidebarRef = useRef<any>();
@@ -156,7 +151,7 @@ const SideBar = () => {
                 {sideBarExpanded && <p className="capitalize">{items.name}</p>}
               </div>
               {/* web view item buttons  */}
-              {sideBarExpanded && (
+              {/* {sideBarExpanded && (
                 <div>
                   {items.pinned === true ? (
                     <div
@@ -174,7 +169,7 @@ const SideBar = () => {
                     </div>
                   )}
                 </div>
-              )}
+              )} */}
             </div>
           )
         )}
@@ -186,12 +181,13 @@ const SideBar = () => {
         <button
           disabled={showAddWenViewModal}
           onClick={toggleModal}
-          className="border-2 bg-blue-500 hover:bg-blue-400 text-white w-full h-12 rounded-lg text-3xl bold "
+          className="border-2 flex items-center justify-center bg-blue-500 hover:bg-blue-400 text-white w-full h-12 rounded-lg text-3xl bold "
         >
           {sideBarExpanded && <p className="text-sm">Add New WebApp</p>}{' '}
-          {!sideBarExpanded && '+'}
+          {!sideBarExpanded && <p>+</p>}
         </button>
-        <button
+        {/* expand button  */}
+        {/* <button
           onClick={() => dispatch(togglesideBarExpanded(!sideBarExpanded))}
           className="border-2 hover:bg-gray-100 flex justify-center items-center text-white w-full h-12 rounded-lg text-3xl bold "
         >
@@ -204,7 +200,7 @@ const SideBar = () => {
           {!sideBarExpanded && (
             <RiExpandRightLine className="text-gray-500 text-2xl" />
           )}
-        </button>
+        </button> */}
       </section>
       {showAddWenViewModal && <AddWebViewModal toggleModal={toggleModal} />}
     </aside>

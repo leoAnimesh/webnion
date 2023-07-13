@@ -4,39 +4,28 @@ import { GoTools } from 'react-icons/go';
 import { TfiReload } from 'react-icons/tfi';
 
 const WebView = ({ data }: any) => {
+  const ispopupsAllowed = 'true' as any;
   let webViewRef = useRef<any>(null);
   const [currentURL, setCurrentURL] = useState(data.url);
   const [loading, setLoading] = useState(true);
-  const [webViewElement, setWebViewElement] = useState<any>(null);
 
   const backBtn = () => {
-    webViewElement.goBack();
+    webViewRef.current.goBack();
   };
 
   const forwardBtn = () => {
-    webViewElement.goForward();
+    webViewRef.current.goForward();
   };
 
   const reloadWindow = () => {
-    webViewElement.reloadIgnoringCache();
+    webViewRef.current.reloadIgnoringCache();
   };
 
   const openDevTools = () => {
-    webViewElement.openDevTools();
+    webViewRef.current.print();
   };
 
   useEffect(() => {
-    const myElement = document.createElement('webview');
-    myElement.src = data.url;
-    myElement.style.width = '100%';
-    myElement.style.height = '94.5vh';
-    myElement.allowpopups = true;
-    myElement.partition = 'persist:webx';
-    myElement.plugins = true;
-
-    webViewRef.current.appendChild(myElement);
-    setWebViewElement(myElement);
-
     const handleNavigation = (e: any) => {
       setCurrentURL(e.url);
     };
@@ -45,15 +34,20 @@ const WebView = ({ data }: any) => {
       setLoading(loading);
     };
 
-    myElement.addEventListener('did-stop-loading', () => {
+    webViewRef.current?.addEventListener('did-stop-loading', () => {
       handleLoading(false);
     });
-    myElement.addEventListener('did-start-loading', () => handleLoading(true));
-    myElement.addEventListener('did-navigate', handleNavigation);
-    myElement.addEventListener('did-navigate-in-page', handleNavigation);
-    myElement.addEventListener('dom-ready', () => {
+    webViewRef.current?.addEventListener('did-start-loading', () =>
+      handleLoading(true)
+    );
+    webViewRef.current?.addEventListener('did-navigate', handleNavigation);
+    webViewRef.current?.addEventListener(
+      'did-navigate-in-page',
+      handleNavigation
+    );
+    webViewRef.current?.addEventListener('dom-ready', () => {
       if (data.url === 'https://web.whatsapp.com') {
-        myElement.setUserAgent(
+        webViewRef.current?.setUserAgent(
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36'
         );
       }
@@ -61,12 +55,15 @@ const WebView = ({ data }: any) => {
     });
 
     return () => {
-      myElement.removeEventListener('did-navigate-in-page', handleNavigation);
-      myElement.removeEventListener('did-navigate', handleNavigation);
-      myElement.removeEventListener('did-stop-loading', () =>
+      webViewRef.current?.removeEventListener(
+        'did-navigate-in-page',
+        handleNavigation
+      );
+      webViewRef.current?.removeEventListener('did-navigate', handleNavigation);
+      webViewRef.current?.removeEventListener('did-stop-loading', () =>
         handleLoading(false)
       );
-      myElement.removeEventListener('did-start-loading', () =>
+      webViewRef.current?.removeEventListener('did-start-loading', () =>
         handleLoading(false)
       );
     };
@@ -74,7 +71,7 @@ const WebView = ({ data }: any) => {
 
   return (
     <>
-      <section className="flex justify-between p-3 border-b-2">
+      <section className="flex sticky top-0 justify-between p-3 border-b-2">
         {/* left section  */}
         <div className="flex gap-2">
           <div
@@ -119,11 +116,10 @@ const WebView = ({ data }: any) => {
           </div>
         </div>
       </section>
-      <div ref={webViewRef} />
-      {/* <webview
+      <webview
         ref={webViewRef}
         src={data.url}
-        allowpopups
+        allowpopups={ispopupsAllowed}
         webpreferences="nativeWindowOpen=true"
         useragent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
         partition={`persist:webx}`}
@@ -131,7 +127,7 @@ const WebView = ({ data }: any) => {
           width: '100%',
           height: '100%',
         }}
-      /> */}
+      />
     </>
   );
 };

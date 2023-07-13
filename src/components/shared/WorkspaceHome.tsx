@@ -2,11 +2,13 @@ import { useAppSelector } from '../../redux/hooks';
 import {
   addWebView,
   deleteWebAppEntry,
+  togglePinned,
 } from '../../redux/slices/WorkspaceSlice';
 import { useDispatch } from 'react-redux';
-import { RiAddCircleLine, RiDeleteBin3Line } from 'react-icons/ri';
+import { RiAddCircleLine, RiDeleteBin3Line, RiUnpinLine } from 'react-icons/ri';
 import { WebViewPresets } from '../../utils/StaticData/PresetWebApps';
 import { v4 as uuid } from 'uuid';
+import { BiPin } from 'react-icons/bi';
 
 const WorkspaceHome = () => {
   const dispatch = useDispatch();
@@ -14,8 +16,12 @@ const WorkspaceHome = () => {
     (state) => state.workspaceState
   );
 
-  const deleteWebApp = (id: string) => {
-    dispatch(deleteWebAppEntry({ id }));
+  const deleteWebApp = (id: string, url: string) => {
+    dispatch(deleteWebAppEntry({ id, url }));
+  };
+
+  const togglePins = (id: string, pinned: boolean) => {
+    dispatch(togglePinned({ id, pinned }));
   };
 
   const addPresentToWorkspace = (webApp: any) => {
@@ -57,7 +63,25 @@ const WorkspaceHome = () => {
                 </div>
               </div>
               <div className="flex">
-                <div className="mx-2" onClick={() => deleteWebApp(item.id)}>
+                {item.pinned ? (
+                  <div
+                    className="mx-2"
+                    onClick={() => togglePins(item.id, false)}
+                  >
+                    <RiUnpinLine className="text-xl hover:text-blue-500 cursor-pointer " />
+                  </div>
+                ) : (
+                  <div
+                    className="mx-2"
+                    onClick={() => togglePins(item.id, true)}
+                  >
+                    <BiPin className="text-xl hover:text-blue-500 cursor-pointer " />
+                  </div>
+                )}
+                <div
+                  className="mx-2"
+                  onClick={() => deleteWebApp(item.id, item.url)}
+                >
                   <RiDeleteBin3Line className="text-xl hover:text-red-500 cursor-pointer " />
                 </div>
               </div>

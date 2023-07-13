@@ -64,11 +64,15 @@ export const WorkspaceSlice = createSlice({
       const { id } = action.payload;
       state.workSpaces[state.currentWorkSpace].currentWebViewId = id;
     },
-    deleteWebAppEntry: (state, action: PayloadAction<{ id: string }>) => {
-      const { id } = action.payload;
+    deleteWebAppEntry: (
+      state,
+      action: PayloadAction<{ id: string; url: string }>
+    ) => {
+      const { id, url } = action.payload;
       let filterData = state.workSpaces[state.currentWorkSpace].webViews.filter(
         (item) => item.id !== id
       );
+      delete state.workSpaces[state.currentWorkSpace].webViewsObj[url];
       state.workSpaces[state.currentWorkSpace].webViews = [...filterData];
     },
     toggleManageWorkspaceModal: (state) => {
