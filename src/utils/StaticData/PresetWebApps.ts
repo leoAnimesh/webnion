@@ -1,5 +1,5 @@
 export const WebViewPresets = {
-  Popular: [
+  'Social Apps': [
     {
       id: '4ae9a412-8556-4ad8-8e2b-3cf92b83d418',
       name: 'Facebook',
@@ -26,12 +26,12 @@ export const WebViewPresets = {
       url: 'https://web.telegram.org/',
     },
     {
-      id: 'dc7da8b1-d4af-495f-b435-3a054e6ca3c0',
-      name: 'Notion',
-      url: 'https://notion.so/',
+      id: 'fe4c43f5-4648-493a-a497-6bf7bea3e615',
+      name: 'WhatsApp',
+      url: 'https://web.whatsapp.com/',
     },
   ],
-  'Google Apss': [
+  'Google Apps': [
     {
       id: 'dcb6c890-3f69-43ac-85ac-8b55d5d8c24a',
       name: 'Drive',
@@ -51,6 +51,23 @@ export const WebViewPresets = {
       id: '856fb2df-a60f-4688-864d-76291f3ca714',
       name: 'Youtube',
       url: 'https://youtube.com/',
+    },
+  ],
+  'Dev Apps': [
+    {
+      id: '4ae9a412-8556-4ad8-8e2b-3cf92b83d418',
+      name: 'Github',
+      url: 'https://github.com',
+    },
+    {
+      id: 'a0435869-2c2d-44a6-96ce-dc432ffc2108',
+      name: 'Stackblitz',
+      url: 'https://stackblitz.com',
+    },
+    {
+      id: '5409cb7d-5dea-4af0-af46-056191448715',
+      name: 'Codesandbox',
+      url: 'https://codesandbox.io',
     },
   ],
 };

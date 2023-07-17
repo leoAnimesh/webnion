@@ -69,18 +69,18 @@ const ManageWorkspaceModal = () => {
               currentWorkSpace === key
                 ? 'border-blue-400'
                 : 'border-gray-100 hover:border-gray-200'
-            }  border-2 p-2 h-fit text-gray-500 relative w-full cursor-pointer rounded-lg text-sm bold flex justify-between items-center `}
+            }  border-2 p-2 h-fit text-gray-500 dark:bg-dark dark:text-white relative w-full cursor-pointer rounded-lg text-sm bold flex justify-between items-center `}
           >
             <div className="flex items-center gap-3">
               <div
-                className="bg-blue-100 rounded-md text-center flex justify-center items-center"
+                className="bg-blue-100 dark:bg-darker rounded-md text-center flex justify-center items-center"
                 style={{ width: '50px', height: '50px' }}
               >
                 <p className="text-2xl">{value.workspaceDetails.emoji}</p>
               </div>
               <div className="mb-2">
                 <p className="text-md capitalize ">{key} Workspace </p>
-                <p className="text-xs">webx-appname </p>
+                <p className="text-xs">webnion</p>
               </div>
               {/* <BsBrowserChrome className="text-2xl" /> */}
             </div>
@@ -95,7 +95,7 @@ const ManageWorkspaceModal = () => {
             <h1>Add Workspace Details</h1>
             <div
               onClick={() => setShowInput(!showInputs)}
-              className="bg-gray-100 w-5 cursor-pointer h-5 flex justify-center items-center rounded-full"
+              className="bg-gray-100 dark:bg-dark w-5 cursor-pointer h-5 flex justify-center items-center rounded-full"
             >
               <RiCloseLine className="text-sm" />
             </div>
@@ -105,7 +105,7 @@ const ManageWorkspaceModal = () => {
               value={formData.workspaceName}
               onChange={handleFromDataChange}
               type="text"
-              className="border-2 w-full px-2 py-1 placeholder:text-sm"
+              className="border-2 w-full px-2 py-1 dark:bg-dark dark:border-dark placeholder:text-sm"
               placeholder="Workspace Name"
               name="workspaceName"
             />
@@ -114,7 +114,7 @@ const ManageWorkspaceModal = () => {
               onChange={handleFromDataChange}
               type="text"
               placeholder="Add Emoji"
-              className="border-2 w-full px-2 py-1 placeholder:text-sm"
+              className="border-2 w-full px-2 py-1 dark:bg-dark dark:border-dark placeholder:text-sm"
               name="workspaceEmoji"
             />
           </div>

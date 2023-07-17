@@ -5,22 +5,23 @@ import { TfiReload } from 'react-icons/tfi';
 import { WebViewData } from '../../types/workspaceDataTypes';
 import { RiCloseFill } from 'react-icons/ri';
 
-const WebView: React.FC<{ data: WebViewData; close?: () => void }> = ({
-  data,
-  close,
-}) => {
+const WebView: React.FC<{
+  data: WebViewData;
+  close?: () => void;
+}> = ({ data, close }) => {
   const ispopupsAllowed = 'true' as any;
   let webViewRef = useRef<any>(null);
   const [currentURL, setCurrentURL] = useState(data.url);
   const [loading, setLoading] = useState(true);
 
   const backBtn = () => {
-    if (webViewRef.current.canGoBack()) {
-      webViewRef.current.goBack();
+    if (!webViewRef.current.canGoBack()) {
+      if (close) {
+        close();
+        return;
+      }
     }
-    if (close) {
-      close();
-    }
+    webViewRef.current.goBack();
   };
 
   const forwardBtn = () => {
@@ -32,7 +33,7 @@ const WebView: React.FC<{ data: WebViewData; close?: () => void }> = ({
   };
 
   const openDevTools = () => {
-    webViewRef.current.print();
+    webViewRef.current.openDevTools();
   };
 
   useEffect(() => {
@@ -81,17 +82,17 @@ const WebView: React.FC<{ data: WebViewData; close?: () => void }> = ({
 
   return (
     <>
-      <section className="flex sticky top-0 justify-between p-3 border-b-2">
+      <section className="flex dark:bg-darker dark:text-white dark:border-darker  sticky top-0 justify-between p-3 border-b-2">
         {/* left section  */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 ">
           <div
-            className="border-2 p-1 cursor-pointer rounded-md"
+            className="border-2 p-1 dark:bg-dark dark:border-dark cursor-pointer rounded-md"
             onClick={backBtn}
           >
             <BiLeftArrow />
           </div>
           <div
-            className="border-2 p-1 cursor-pointer rounded-md"
+            className="border-2 p-1 dark:bg-dark dark:border-dark cursor-pointer rounded-md"
             onClick={forwardBtn}
           >
             <BiRightArrow />
@@ -99,7 +100,7 @@ const WebView: React.FC<{ data: WebViewData; close?: () => void }> = ({
         </div>
 
         {/* middle section  */}
-        <div className="w-2/5 border-2 flex justify-between items-center rounded-md">
+        <div className="w-2/5 border-2 flex dark:bg-dark dark:border-dark justify-between items-center rounded-md">
           <div className="mx-3 flex justify-center items-center">
             {loading && (
               <div
@@ -110,7 +111,7 @@ const WebView: React.FC<{ data: WebViewData; close?: () => void }> = ({
           </div>
           <input
             disabled
-            className="text-center text-sm w-full"
+            className="text-center text-sm w-full dark:bg-dark dark:border-dark"
             value={currentURL}
           />
           <TfiReload className="mx-2 cursor-pointer" onClick={reloadWindow} />
@@ -120,14 +121,14 @@ const WebView: React.FC<{ data: WebViewData; close?: () => void }> = ({
         <div className="flex gap-2">
           {close ? (
             <div
-              className="border-2  p-1 cursor-pointer rounded-md"
+              className="border-2 dark:bg-dark dark:border-dark  p-1 cursor-pointer rounded-md"
               onClick={close}
             >
               <RiCloseFill />
             </div>
           ) : (
             <div
-              className="border-2  p-1 cursor-pointer rounded-md"
+              className="border-2 dark:bg-dark dark:border-dark  p-1 cursor-pointer rounded-md"
               onClick={openDevTools}
             >
               <GoTools />
@@ -142,10 +143,7 @@ const WebView: React.FC<{ data: WebViewData; close?: () => void }> = ({
         webpreferences="nativeWindowOpen=true"
         useragent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
         partition={`persist:webx}`}
-        style={{
-          width: '100%',
-          height: '100%',
-        }}
+        className="w-full h-full dark:bg-darker"
       />
     </>
   );

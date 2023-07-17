@@ -1,4 +1,4 @@
-import React, { useEffect, useState, ReactNode } from 'react';
+import React, { useState, ReactNode, useLayoutEffect } from 'react';
 import { useAppSelector } from '../../redux/hooks';
 
 interface MainWindowWrapperProps {
@@ -24,7 +24,7 @@ const MainWindowWrapper: React.FC<MainWindowWrapperProps> = ({
     height: window.innerHeight,
   });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const handleResize = (e: any) => {
       setWindowSize({
         width: e.target.innerWidth,

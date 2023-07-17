@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, session, BrowserWindow } from 'electron';
 import path from 'node:path';
 
 // The built directory structure
@@ -35,6 +35,10 @@ function createWindow() {
 
   win.setMenuBarVisibility(VITE_DEV_SERVER_URL ? true : false);
 
+  // const filter = {
+  //   urls: ['https://*.github.com/*', '*://electron.github.io/*'],
+  // };
+
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', new Date().toLocaleString());
@@ -52,6 +56,6 @@ app.on('window-all-closed', () => {
   win = null;
 });
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   createWindow();
 });

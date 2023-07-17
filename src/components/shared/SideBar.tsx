@@ -61,7 +61,7 @@ const SideBar = () => {
   return (
     <aside
       ref={sidebarRef}
-      className="border-2 flex flex-col fixed left-0 h-screen bg-white z-30  justify-between gap-2 p-2 "
+      className=" border-r-2 flex flex-col fixed left-0 h-screen bg-white dark:bg-darker dark:border-dark z-30  justify-between gap-2 p-2 "
       style={{ width: `${sideBarExpanded ? 260 : 70}px` }}
     >
       {/* sidebar top buttons  */}
@@ -69,11 +69,11 @@ const SideBar = () => {
         {/* top main icon  */}
         <div
           onClick={() => dispatch(toggleManageWorkspaceModal())}
-          className={`border-gray-100 hover:border-gray-200 border-2 h-fit text-gray-500 relative w-full cursor-pointer rounded-lg text-sm bold flex justify-between items-center `}
+          className={`border-gray-100 hover:border-gray-200  h-fit text-gray-500 relative w-full cursor-pointer rounded-lg text-sm bold flex justify-between items-center `}
         >
           <div className="flex items-center gap-3">
             <div
-              className="bg-blue-100 rounded-md text-center flex justify-center items-center"
+              className="bg-blue-100 dark:bg-dark rounded-md text-center flex justify-center items-center"
               style={{ width: '50px', height: '50px' }}
             >
               <p className="text-2xl">
@@ -85,7 +85,7 @@ const SideBar = () => {
                 <p className="text-md capitalize ">
                   {currentWorkSpace} Workspace{' '}
                 </p>
-                <p className="text-xs">webx-appname </p>
+                <p className="text-xs">Webnion </p>
               </div>
             )}
           </div>
@@ -102,8 +102,8 @@ const SideBar = () => {
             workSpaces[currentWorkSpace].currentWebViewId ===
             workSpaces[currentWorkSpace].WorkspaceMenu.id
               ? 'border-blue-600'
-              : 'border-gray-100'
-          } text-gray-500 relative w-full cursor-pointer h-12 rounded-lg text-sm bold flex justify-between gap-4 px-3 items-center `}
+              : 'border-gray-100 dark:border-dark'
+          } text-gray-500 dark:bg-dark  relative w-full cursor-pointer h-12 rounded-lg text-sm bold flex justify-between gap-4 px-3 items-center `}
         >
           <div className="flex gap-3">
             <div className="text-xl">📦</div>
@@ -127,8 +127,8 @@ const SideBar = () => {
               className={`border-2 ${
                 workSpaces[currentWorkSpace].currentWebViewId === items.id
                   ? 'border-blue-600'
-                  : 'border-gray-100'
-              } text-gray-500 relative w-full cursor-pointer h-12 rounded-lg text-sm bold flex justify-between gap-4 px-3 items-center `}
+                  : 'border-gray-100 dark:border-dark'
+              } text-gray-500 dark:bg-dark relative w-full cursor-pointer h-12 rounded-lg text-sm bold flex justify-between gap-4 px-3 items-center `}
             >
               {!sideBarExpanded && items.pinned === true && (
                 <div className="w-4 h-4 absolute -right-2 -bottom-2 flex justify-center items-center text-white text-xs rounded-full bg-gray-400">
@@ -175,7 +175,7 @@ const SideBar = () => {
         <button
           disabled={showAddWenViewModal}
           onClick={toggleModal}
-          className="border-2 flex items-center justify-center bg-blue-500 hover:bg-blue-400  text-white w-full h-12 rounded-lg text-3xl bold "
+          className="flex items-center justify-center bg-blue-500 hover:bg-blue-400  text-white w-full h-12 rounded-lg text-3xl bold "
         >
           {sideBarExpanded && <p className="text-sm ">Add New WebApp</p>}{' '}
           {!sideBarExpanded && <p className="pointer-events-none">+</p>}

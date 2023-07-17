@@ -44,7 +44,7 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
     >
       <div
         ref={modalRef}
-        className="bg-white shadow-lg flex flex-col p-4 "
+        className="bg-white dark:bg-darker dark:border-dark border-2 dark:text-white shadow-lg flex flex-col p-4 "
         style={{ ...innerContainerStyles }}
       >
         {children}

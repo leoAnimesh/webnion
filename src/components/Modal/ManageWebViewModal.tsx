@@ -107,7 +107,11 @@ const ManageWebViewModal: React.FC<ManageWebViewModalProps> = ({
   return (
     <ModalContainer
       toggleModal={toggleModal}
-      innerContainerStyles={{ width: '300px', height: '100%' }}
+      innerContainerStyles={{
+        width: '300px',
+        height: '100%',
+        overflow: 'scroll',
+      }}
       outerContainerStyles={{ left: `${sideBarExpanded ? 258 : 68}px` }}
     >
       <form onSubmit={onSubmit} className="flex flex-col gap-3 mb-1 w-full">
@@ -115,7 +119,7 @@ const ManageWebViewModal: React.FC<ManageWebViewModalProps> = ({
           <h1 className="text-lg font-semibold">Add Web Apps</h1>
           <div
             onClick={toggleModal}
-            className="bg-gray-100 w-5 cursor-pointer h-5 flex justify-center items-center rounded-full"
+            className="bg-gray-100 dark:bg-dark w-5 cursor-pointer h-5 flex justify-center items-center rounded-full"
           >
             <RiCloseLine className="text-sm" />
           </div>
@@ -124,7 +128,7 @@ const ManageWebViewModal: React.FC<ManageWebViewModalProps> = ({
           value={formData.url}
           onChange={handleFormChange}
           type="text"
-          className="border-2 w-full px-2 py-1 placeholder:text-sm"
+          className="border-2 dark:bg-dark dark:border-dark w-full px-2 py-1 placeholder:text-sm"
           placeholder="https://example.com"
           name="url"
         />
@@ -132,7 +136,7 @@ const ManageWebViewModal: React.FC<ManageWebViewModalProps> = ({
           value={formData.name}
           onChange={handleFormChange}
           type="text"
-          className="border-2 w-full px-2 py-1 placeholder:text-sm"
+          className="border-2 dark:bg-dark dark:border-dark w-full px-2 py-1 placeholder:text-sm"
           placeholder="Name of WebApp"
           name="name"
         />
@@ -156,7 +160,7 @@ const ManageWebViewModal: React.FC<ManageWebViewModalProps> = ({
                     item.url
                   ) && (
                     <div key={index}>
-                      <div className="border-2 relative p-3 rounded-md w-fit">
+                      <div className="border-2 dark:bg-dark dark:border-dark relative p-3 rounded-md w-fit">
                         <img
                           className="w-7 h-7 rounded-md"
                           src={`http://www.google.com/s2/favicons?domain=${item.url}`}
@@ -164,7 +168,7 @@ const ManageWebViewModal: React.FC<ManageWebViewModalProps> = ({
                         />
                         <RiAddCircleLine
                           onClick={() => addPresentToWorkspace(item)}
-                          className="text-xl absolute -right-2 hover:text-blue-500 cursor-pointer "
+                          className="text-xl absolute dark:bg-dark rounded-full -right-2 hover:text-blue-500 cursor-pointer "
                         />
                       </div>
                       <p className="text-xs text-center mt-2">

@@ -33,9 +33,25 @@ const WorkSpaceDataSlice = createSlice({
       );
       state.workSpaceData[currentWorkSpace].todos = [...filteredData];
     },
+    markTodoAsDone: (
+      state,
+      action: PayloadAction<{ id: string; currentWorkSpace: string }>
+    ) => {
+      const { id, currentWorkSpace } = action.payload;
+      let modifiedData = state.workSpaceData[currentWorkSpace].todos.map(
+        (item) => {
+          if (item.id === id) {
+            return { ...item, done: true };
+          }
+          return item;
+        }
+      );
+      state.workSpaceData[currentWorkSpace].todos = [...modifiedData];
+    },
   },
 });
 
-export const { addTodo, deleteTodo } = WorkSpaceDataSlice.actions;
+export const { addTodo, deleteTodo, markTodoAsDone } =
+  WorkSpaceDataSlice.actions;
 
 export default WorkSpaceDataSlice.reducer;
