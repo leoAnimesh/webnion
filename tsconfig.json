@@ -18,7 +18,8 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "typeRoots": ["./src/types"],
   },
   "include": ["src", "electron", "src/components/shared/preload.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]

@@ -4,11 +4,14 @@ import { GoTools } from 'react-icons/go';
 import { TfiReload } from 'react-icons/tfi';
 import { WebViewData } from '../../types/workspaceDataTypes';
 import { RiCloseFill } from 'react-icons/ri';
+import { useAppDispatch } from '../../redux/hooks';
+import { addWebViewScreenShot } from '../../redux/slices/WorkspaceSlice';
 
 const WebView: React.FC<{
   data: WebViewData;
   close?: () => void;
 }> = ({ data, close }) => {
+  const dispatch = useAppDispatch();
   const ispopupsAllowed = 'true' as any;
   let webViewRef = useRef<any>(null);
   const [currentURL, setCurrentURL] = useState(data.url);
@@ -34,6 +37,21 @@ const WebView: React.FC<{
 
   const openDevTools = () => {
     webViewRef.current.openDevTools();
+  };
+
+  const captureScreenshot = async () => {
+    try {
+      const response = await window.electron.sendIpcRequest(
+        'screenshot-capture-request',
+        {
+          id: webViewRef.current.getWebContentsId(),
+        }
+      );
+
+      dispatch(addWebViewScreenShot({ imageUrl: response, id: data.id }));
+    } catch (error) {
+      console.error('Error in secure request:', error);
+    }
   };
 
   useEffect(() => {
@@ -62,6 +80,13 @@ const WebView: React.FC<{
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36'
         );
       }
+
+      if (!data?.screenshot) {
+        setTimeout(async () => {
+          await captureScreenshot();
+        }, 2000);
+      }
+
       console.log('web view is ready');
     });
 
@@ -139,11 +164,12 @@ const WebView: React.FC<{
       <webview
         ref={webViewRef}
         src={data.url}
+        plugins={'true' as any}
         allowpopups={ispopupsAllowed}
         webpreferences="nativeWindowOpen=true"
         useragent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
         partition={`persist:webx}`}
-        className="w-full h-full dark:bg-darker"
+        className="w-full h-full"
       />
     </>
   );

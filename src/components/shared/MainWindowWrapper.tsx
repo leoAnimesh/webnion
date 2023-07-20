@@ -15,7 +15,6 @@ const MainWindowWrapper: React.FC<MainWindowWrapperProps> = ({
   children,
   id,
 }) => {
-  const { sideBarExpanded } = useAppSelector((state) => state.conditionsState);
   const { workSpaces, currentWorkSpace } = useAppSelector(
     (state) => state.workspaceState
   );
@@ -37,7 +36,7 @@ const MainWindowWrapper: React.FC<MainWindowWrapperProps> = ({
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [sideBarExpanded]);
+  }, []);
 
   console.log();
 

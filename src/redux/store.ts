@@ -6,20 +6,18 @@ import {
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import workspaceReducer from './slices/WorkspaceSlice';
-import conditionsReducer from './slices/ConditonsSlice';
 import WorkspaceDataReducer from './slices/WorkspaceDataSlice';
 
 const rootReducer = combineReducers({
   workspaceState: workspaceReducer,
   workspaceData: WorkspaceDataReducer,
-  conditionsState: conditionsReducer,
 });
 
 const persistConfig = {
   key: 'root',
   version: 1,
   storage,
-  whitelist: [],
+  whitelist: ['workspaceState'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

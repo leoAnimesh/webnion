@@ -55,6 +55,11 @@ export const WebViewPresets = {
   ],
   'Dev Apps': [
     {
+      id: '51a118b1-7592-41e0-89a1-2c3ee61e25ea',
+      name: 'ChatGpt',
+      url: 'https://chat.openai.com/',
+    },
+    {
       id: '4ae9a412-8556-4ad8-8e2b-3cf92b83d418',
       name: 'Github',
       url: 'https://github.com',

@@ -4,21 +4,21 @@ import { WebViewData, WorkSpacesType } from '../../types/workspaceDataTypes';
 
 const initialState: WorkSpacesType = {
   workSpaces: {
-    default: {
-      workspaceDetails: {
-        emoji: '🌐',
-      },
-      WorkspaceMenu: {
-        id: '03220916-6c71-4d83-9545-487d09e8bc87',
-        name: 'WebApps Menu',
-      },
-      webViewsObj: {},
-      webViews: [],
-      currentWebViewId: '03220916-6c71-4d83-9545-487d09e8bc87',
-    },
+    // default: {
+    //   workspaceDetails: {
+    //     emoji: '🌐',
+    //   },
+    //   WorkspaceMenu: {
+    //     id: '03220916-6c71-4d83-9545-487d09e8bc87',
+    //     name: 'WebApps Menu',
+    //   },
+    //   webViewsObj: {},
+    //   webViews: [],
+    //   currentWebViewId: '03220916-6c71-4d83-9545-487d09e8bc87',
+    // },
   },
   showWorkspaceModal: false,
-  currentWorkSpace: 'default',
+  currentWorkSpace: '',
 };
 
 export const WorkspaceSlice = createSlice({
@@ -30,6 +30,20 @@ export const WorkspaceSlice = createSlice({
       state.workSpaces[state.currentWorkSpace].currentWebViewId = data.id;
       state.workSpaces[state.currentWorkSpace].webViewsObj[data.url] = data.id;
       state.workSpaces[state.currentWorkSpace].webViews.push(data);
+    },
+    addWebViewScreenShot: (
+      state,
+      action: PayloadAction<{ imageUrl: string; id: string }>
+    ) => {
+      const { imageUrl, id } = action.payload;
+      const { workSpaces, currentWorkSpace } = state;
+      let modifiedData = workSpaces[currentWorkSpace].webViews.map((item) => {
+        if (item.id === id) {
+          return { ...item, screenshot: imageUrl };
+        }
+        return item;
+      });
+      workSpaces[currentWorkSpace].webViews = [...modifiedData];
     },
     changeCurrentWebView: (state, action: PayloadAction<{ id: string }>) => {
       const { id } = action.payload;
@@ -108,6 +122,7 @@ export const {
   toggleManageWorkspaceModal,
   addWorkSpace,
   switchWorkSpace,
+  addWebViewScreenShot,
   togglePinned,
 } = WorkspaceSlice.actions;
 

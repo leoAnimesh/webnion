@@ -7,9 +7,8 @@ Multi-web desktop application, application to manage web apps with ease no needs
 - [x] Workspace management
 - [x] Workspace notes
 - [x] normal web suring too
-- [ ] Taking notes directly in the Main app from any webpp
+- [x] dark mode
 - [ ] clipboard history
-- [ ] dark mode
 
 ## Dev Setup
 

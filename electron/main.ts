@@ -1,5 +1,6 @@
-import { app, session, BrowserWindow } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
+import setupIPCHandlers from './ipcHandler';
 
 // The built directory structure
 //
@@ -27,6 +28,8 @@ function createWindow() {
     width: 1080,
     height: 720,
     webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
       preload: path.join(__dirname, 'preload.js'),
       partition: 'persist:webx',
       webviewTag: true,
@@ -34,11 +37,6 @@ function createWindow() {
   });
 
   win.setMenuBarVisibility(VITE_DEV_SERVER_URL ? true : false);
-
-  // const filter = {
-  //   urls: ['https://*.github.com/*', '*://electron.github.io/*'],
-  // };
-
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', new Date().toLocaleString());
@@ -58,4 +56,7 @@ app.on('window-all-closed', () => {
 
 app.whenReady().then(async () => {
   createWindow();
+
+  // ipcmain request handlers
+  setupIPCHandlers();
 });

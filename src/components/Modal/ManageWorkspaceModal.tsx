@@ -8,6 +8,7 @@ import {
 import { RiCloseLine } from 'react-icons/ri';
 import ModalContainer from './ModalContainer';
 import { useNavigate } from 'react-router-dom';
+import { BiLeftArrow } from 'react-icons/bi';
 
 interface formDataType {
   workspaceName: string;
@@ -16,7 +17,7 @@ interface formDataType {
 
 const ManageWorkspaceModal = () => {
   const dispatch = useAppDispatch();
-  const navigation = useNavigate();
+  const navigate = useNavigate();
   const { workSpaces, currentWorkSpace } = useAppSelector(
     (state) => state.workspaceState
   );
@@ -38,7 +39,7 @@ const ManageWorkspaceModal = () => {
 
   const chanegWorkspace = (key: string) => {
     dispatch(switchWorkSpace({ name: key }));
-    navigation(`/${key}`);
+    navigate(`/webAppsHome/${key}`);
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -57,9 +58,16 @@ const ManageWorkspaceModal = () => {
       outerContainerStyles={{ zIndex: 50 }}
       innerContainerStyles={{ width: '370px', height: '100%' }}
     >
+      <h1
+        className="flex items-center gap-2 cursor-pointer"
+        onClick={() => navigate('/')}
+      >
+        <BiLeftArrow /> Dashboard
+      </h1>
+      <hr className="my-3" />
       <h1 className="font-medium mb-3">Choose Workspace</h1>
       {/* workspace items container  */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         {/* workspace item  */}
         {Object.entries(workSpaces).map(([key, value], index) => (
           <div
@@ -68,7 +76,7 @@ const ManageWorkspaceModal = () => {
             className={`${
               currentWorkSpace === key
                 ? 'border-blue-400'
-                : 'border-gray-100 hover:border-gray-200'
+                : 'border-gray-100 dark:border-dark hover:border-gray-200'
             }  border-2 p-2 h-fit text-gray-500 dark:bg-dark dark:text-white relative w-full cursor-pointer rounded-lg text-sm bold flex justify-between items-center `}
           >
             <div className="flex items-center gap-3">
@@ -80,9 +88,12 @@ const ManageWorkspaceModal = () => {
               </div>
               <div className="mb-2">
                 <p className="text-md capitalize ">{key} Workspace </p>
-                <p className="text-xs">webnion</p>
+                <p className="text-xs">
+                  {' '}
+                  Contains {value.webViews.length}{' '}
+                  {value.webViews.length > 1 ? 'Apps' : 'App'}
+                </p>
               </div>
-              {/* <BsBrowserChrome className="text-2xl" /> */}
             </div>
           </div>
         ))}

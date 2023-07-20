@@ -14,22 +14,28 @@ import {
   deleteTodo,
   markTodoAsDone,
 } from '../../redux/slices/WorkspaceDataSlice';
-import { toggleAddWenViewModal } from '../../redux/slices/ConditonsSlice';
 import moment from 'moment';
+import AlertModal from '../Modal/AlertModal';
+import { WebViewData } from '../../types/workspaceDataTypes';
 
 const WorkspaceHome = () => {
   const dispatch = useAppDispatch();
+  const { workSpaces, currentWorkSpace } = useAppSelector(
+    (state) => state.workspaceState
+  );
+  const { workSpaceData } = useAppSelector((state) => state.workspaceData);
+
   const InputModes = ['search', 'todos'];
   const [inputMode, setInputMode] = useState(InputModes[0]);
   const [showBrowserWindow, setshowBrowserWindow] = useState<boolean>(false);
   const [query, setQuery] = useState('');
   const [todo, setTodo] = useState<string>('');
   const [currentDateTime, setCurrentDateTime] = useState<Date>(new Date());
-
-  const { workSpaces, currentWorkSpace } = useAppSelector(
-    (state) => state.workspaceState
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const toggleDeleteModal = () => setShowDeleteModal(!showDeleteModal);
+  const [currentData, setCurrentData] = useState<WebViewData>(
+    workSpaces[currentWorkSpace].webViews[0]
   );
-  const { workSpaceData } = useAppSelector((state) => state.workspaceData);
 
   const changeWebView = (id: string) => {
     dispatch(changeCurrentWebView({ id }));
@@ -119,7 +125,8 @@ const WorkspaceHome = () => {
             <h1 className="text-5xl font-semibold dark:text-white">
               {moment(currentDateTime).format('LT')}
             </h1>
-            <h1 className="text-xl font-medium dark:text-white">
+            <h1 className="text-lg font-normal dark:text-white">
+              {currentWorkSpace} workspace -{' '}
               {moment(currentDateTime).format('MMMM Do YYYY')}
             </h1>
             <form
@@ -129,7 +136,7 @@ const WorkspaceHome = () => {
               <select
                 value={inputMode}
                 onChange={(e) => setInputMode(e.target.value)}
-                className="border-2 dark:border-dark dark:text-white px-1 py-1 rounded-md dark:bg-dark"
+                className="border-2 dark:border-dark dark:text-white px-1 py-1 outline-none rounded-md dark:bg-dark"
               >
                 {InputModes.map((item, index) => (
                   <option key={index} value={item}>
@@ -150,7 +157,7 @@ const WorkspaceHome = () => {
                     : 'Add your todos here'
                 }
                 type="text"
-                className="border-2 dark:border-dark dark:bg-dark p-1 w-[25%] rounded-md placeholder:text-sm"
+                className="border-2 dark:border-dark dark:bg-dark p-1 outline-none dark:text-white w-[25%] rounded-md placeholder:text-sm"
               />
               <button
                 type="submit"
@@ -202,16 +209,10 @@ const WorkspaceHome = () => {
                 <p className="text-base dark:text-white">
                   No Apps Added yet 🤔{' '}
                 </p>
-                <p
-                  className="text-base text-blue-500 cursor-pointer font-medium"
-                  onClick={() => dispatch(toggleAddWenViewModal())}
-                >
-                  Add Now
-                </p>
               </div>
             )}
 
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap items-center justify-center gap-4">
               {workSpaces[currentWorkSpace].webViews.map((item, index) => (
                 <div
                   key={index}
@@ -249,7 +250,10 @@ const WorkspaceHome = () => {
                     )}
                     <div
                       className="mx-2"
-                      onClick={() => deleteWebApp(item.id, item.url)}
+                      onClick={() => {
+                        setCurrentData(item);
+                        toggleDeleteModal();
+                      }}
                     >
                       <RiDeleteBin3Line className="text-xl hover:text-red-500 cursor-pointer " />
                     </div>
@@ -259,6 +263,18 @@ const WorkspaceHome = () => {
             </div>
           </section>
         </section>
+      )}
+      {showDeleteModal && (
+        <AlertModal
+          title="⚠️ Confirmation for Deletion"
+          message={`Do you want to delete "${currentData.name}" from your ${currentWorkSpace} workspace ?`}
+          toggleModal={toggleDeleteModal}
+          actionButtonTitle="delete"
+          actionBtnFunc={() => {
+            deleteWebApp(currentData.id, currentData.url);
+            toggleDeleteModal();
+          }}
+        />
       )}
     </div>
   );

@@ -9,7 +9,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@cliqz/adblocker-electron": "^1.26.6",
     "@reduxjs/toolkit": "^1.9.5",
     "moment": "^2.29.4",
     "react": "^18.2.0",
@@ -21,6 +20,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/node": "^20.4.2",
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
     "@types/react-redux": "^7.1.25",

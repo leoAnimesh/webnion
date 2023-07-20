@@ -3,6 +3,7 @@ export interface WebViewData {
   name: string;
   url: string;
   pinned: boolean;
+  screenshot?: string;
 }
 
 export interface WorkspaceDetails {

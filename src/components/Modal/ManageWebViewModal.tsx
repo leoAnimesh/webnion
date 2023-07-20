@@ -3,9 +3,8 @@ import { v4 as uuid } from 'uuid';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { addWebView } from '../../redux/slices/WorkspaceSlice';
 import { WebViewPresets } from '../../utils/StaticData/PresetWebApps';
-import { RiAddCircleLine, RiCloseLine } from 'react-icons/ri';
+import { RiAddCircleLine, RiCheckFill, RiCloseLine } from 'react-icons/ri';
 import ModalContainer from './ModalContainer';
-import { toggleAddWenViewModal } from '../../redux/slices/ConditonsSlice';
 
 interface ManageWebViewModalProps {
   toggleModal: () => void;
@@ -19,7 +18,6 @@ interface formDataType {
 const ManageWebViewModal: React.FC<ManageWebViewModalProps> = ({
   toggleModal,
 }) => {
-  const { sideBarExpanded } = useAppSelector((state) => state.conditionsState);
   const { workSpaces, currentWorkSpace } = useAppSelector(
     (state) => state.workspaceState
   );
@@ -56,13 +54,8 @@ const ManageWebViewModal: React.FC<ManageWebViewModalProps> = ({
     url: string;
   }) => {
     let id = uuid();
-    console.log(workSpaces[currentWorkSpace].webViewsObj);
-    if (workSpaces[currentWorkSpace].webViewsObj.hasOwnProperty(webApp.url)) {
-      window.alert('already presen in current workspace ');
-      return;
-    }
     dispatch(addWebView({ ...webApp, id, pinned: false }));
-    dispatch(toggleAddWenViewModal());
+    toggleModal();
   };
 
   useEffect(() => {
@@ -112,7 +105,7 @@ const ManageWebViewModal: React.FC<ManageWebViewModalProps> = ({
         height: '100%',
         overflow: 'scroll',
       }}
-      outerContainerStyles={{ left: `${sideBarExpanded ? 258 : 68}px` }}
+      outerContainerStyles={{ left: `68px` }}
     >
       <form onSubmit={onSubmit} className="flex flex-col gap-3 mb-1 w-full">
         <div className="flex items-center justify-between">
@@ -154,31 +147,37 @@ const ManageWebViewModal: React.FC<ManageWebViewModalProps> = ({
           <div key={index}>
             <h1 className="mb-3 font-medium">{title}</h1>
             <div className="grid grid-cols-4 gap-3">
-              {webApps.map(
-                (item, index) =>
-                  !workSpaces[currentWorkSpace].webViewsObj.hasOwnProperty(
-                    item.url
-                  ) && (
-                    <div key={index}>
-                      <div className="border-2 dark:bg-dark dark:border-dark relative p-3 rounded-md w-fit">
-                        <img
-                          className="w-7 h-7 rounded-md"
-                          src={`http://www.google.com/s2/favicons?domain=${item.url}`}
-                          alt="icon"
-                        />
-                        <RiAddCircleLine
-                          onClick={() => addPresentToWorkspace(item)}
-                          className="text-xl absolute dark:bg-dark rounded-full -right-2 hover:text-blue-500 cursor-pointer "
-                        />
-                      </div>
-                      <p className="text-xs text-center mt-2">
-                        {item.name.length > 9
-                          ? `${item.name.slice(0, 8)}..`
-                          : item.name}
-                      </p>
-                    </div>
-                  )
-              )}
+              {webApps.map((item, index) => (
+                <div key={index}>
+                  <div className="border-2 dark:bg-dark dark:border-dark relative p-3 rounded-md w-fit">
+                    <img
+                      className="w-7 h-7 rounded-md"
+                      src={`http://www.google.com/s2/favicons?domain=${item.url}`}
+                      alt="icon"
+                    />
+                    {workSpaces[currentWorkSpace].webViewsObj.hasOwnProperty(
+                      item.url
+                    ) ? (
+                      <RiCheckFill className="text-xl text-white p-1 absolute dark:bg-dark rounded-full -right-2 hover:text-blue-500 cursor-pointer bg-green-500 " />
+                    ) : (
+                      <RiAddCircleLine
+                        onClick={() =>
+                          !workSpaces[
+                            currentWorkSpace
+                          ].webViewsObj.hasOwnProperty(item.url) &&
+                          addPresentToWorkspace(item)
+                        }
+                        className="text-xl absolute dark:bg-dark rounded-full -right-2 hover:text-blue-500 cursor-pointer "
+                      />
+                    )}
+                  </div>
+                  <p className="text-xs text-center mt-2">
+                    {item.name.length > 9
+                      ? `${item.name.slice(0, 8)}..`
+                      : item.name}
+                  </p>
+                </div>
+              ))}
             </div>
             {index !== Object.entries(WebViewPresets).length - 1 && (
               <hr className="my-4" />

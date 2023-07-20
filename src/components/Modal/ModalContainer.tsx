@@ -3,8 +3,8 @@ import { useEffect, useRef, ReactNode } from 'react';
 interface ModalContainerProps {
   children: ReactNode;
   toggleModal: () => void;
-  outerContainerStyles: { [key: string]: string | number };
-  innerContainerStyles: { [key: string]: string | number };
+  outerContainerStyles?: { [key: string]: string | number };
+  innerContainerStyles?: { [key: string]: string | number };
 }
 
 const ModalContainer: React.FC<ModalContainerProps> = ({
