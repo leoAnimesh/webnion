@@ -13,15 +13,12 @@ declare global {
   }
 
   interface WorkspaceDetails {
+    menu_id: string;
     emoji: string;
   }
 
   interface WorkspaceDataType {
     workspaceDetails: WorkspaceDetails;
-    WorkspaceMenu: {
-      id: string;
-      name: string;
-    };
     webViewsObj: { [key: string]: string };
     webViews: WebViewData[];
     currentWebViewId: string;

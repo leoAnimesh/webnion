@@ -93,11 +93,8 @@ export const WorkspaceSlice = createSlice({
       let id = uuid();
       state.workSpaces[name] = {
         workspaceDetails: {
+          menu_id: id,
           emoji,
-        },
-        WorkspaceMenu: {
-          id: id,
-          name: 'WebApps Menu',
         },
         webViewsObj: {},
         webViews: [],
@@ -105,6 +102,47 @@ export const WorkspaceSlice = createSlice({
       };
       state.currentWorkSpace = name;
       state.showWorkspaceModal = false;
+    },
+    editWorkspaceData: (
+      state,
+      action: PayloadAction<{
+        data: { name: string; emoji: string };
+        workspaceName: string;
+      }>
+    ) => {
+      const { data, workspaceName } = action.payload;
+      if (
+        data.emoji !== state.workSpaces[workspaceName].workspaceDetails.emoji
+      ) {
+        state.workSpaces[workspaceName] = {
+          ...state.workSpaces[workspaceName],
+          workspaceDetails: {
+            ...state.workSpaces[workspaceName].workspaceDetails,
+            emoji: data.emoji,
+          },
+        };
+        return;
+      }
+
+      if (data.name !== workspaceName) {
+        state.workSpaces[data.name] = state.workSpaces[workspaceName];
+        delete state.workSpaces[workspaceName];
+      }
+    },
+    deleteWorkspace: (
+      state,
+      action: PayloadAction<{ selectedWorkspace: string; index: number }>
+    ) => {
+      const { selectedWorkspace, index } = action.payload;
+      delete state.workSpaces[selectedWorkspace];
+      let temp = Object.entries(state.workSpaces).sort((a, b) =>
+        a[1].webViews.length < b[1].webViews.length ? 1 : -1
+      );
+      if (index == 0) {
+        state.currentWorkSpace = '';
+        return;
+      }
+      state.currentWorkSpace = temp[index - 1][0];
     },
     switchWorkSpace: (state, action: PayloadAction<{ name: string }>) => {
       const { name } = action.payload;
@@ -123,6 +161,8 @@ export const {
   switchWorkSpace,
   addWebViewScreenShot,
   togglePinned,
+  deleteWorkspace,
+  editWorkspaceData,
 } = WorkspaceSlice.actions;
 
 export default WorkspaceSlice.reducer;

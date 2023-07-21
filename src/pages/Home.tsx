@@ -14,11 +14,11 @@ const Home = () => {
 
   return (
     <main className="flex flex-col h-screen w-screen dark:text-white">
-      <div className="h-14 flex items-center shadow-md px-4 dark:bg-dark w-full">
+      <div className="h-[6vh] flex items-center shadow-md px-4 dark:bg-dark w-full">
         <h1 className="font-semibold">Webnion</h1>
       </div>
-      <div className="flex w-full h-full dark:bg-darker">
-        <div className="flex flex-col gap-4 w-[18%] border-r-2 dark:border-dark px-4 py-3 font-medium">
+      <div className="flex h-[94vh] dark:bg-darker">
+        <div className="flex flex-col gap-4 w-[20%] border-r-2 dark:border-dark px-4 py-3 font-medium">
           <h1>Features</h1>
           <div className="flex flex-col gap-3">
             {FEATURES.map((item, index) => (
@@ -42,7 +42,7 @@ const Home = () => {
             ))}
           </div>
         </div>
-        <div className="w-[82%] h-full">
+        <div className="w-[80%]">
           <Outlet />
         </div>
       </div>

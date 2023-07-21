@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../redux/hooks';
 import SideBar from '../components/shared/SideBar';
-import WorkspaceSwitcherModal from '../components/Modal/WorkspaceSwitcherModal';
+import ManageWorkspaceModal from '../components/Modal/ManageWorkspaceModal';
 
 const WebWorkspaceHome = () => {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const WebWorkspaceHome = () => {
     <main className="flex justify-end h-screen w-full">
       <SideBar />
       <Outlet />
-      {showWorkspaceModal && <WorkspaceSwitcherModal />}
+      {showWorkspaceModal && <ManageWorkspaceModal />}
     </main>
   );
 };

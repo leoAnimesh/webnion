@@ -23,7 +23,9 @@ const WorkspaceRenderer = () => {
 
   return (
     <>
-      <MainWindowWrapper id={workSpaces[currentWorkSpace].WorkspaceMenu.id}>
+      <MainWindowWrapper
+        id={workSpaces[currentWorkSpace].workspaceDetails.menu_id}
+      >
         <WorkspaceHome />
       </MainWindowWrapper>
       {location.pathname.split('/')[2] === currentWorkSpace && renderWebViews}

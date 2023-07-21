@@ -1,50 +1,47 @@
 import { useState } from 'react';
-import { BiPlay } from 'react-icons/bi';
+import { BiLinkExternal } from 'react-icons/bi';
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import {
-  addWorkSpace,
   changeCurrentWebView,
+  deleteWebAppEntry,
   switchWorkSpace,
+  toggleManageWorkspaceModal,
 } from '../../redux/slices/WorkspaceSlice';
 import { useNavigate } from 'react-router-dom';
-import { RiDeleteBin3Line } from 'react-icons/ri';
+import { RiDeleteBin3Line, RiSettings2Fill } from 'react-icons/ri';
 import ModalContainer from '../../components/Modal/ModalContainer';
-import { RiCloseLine } from 'react-icons/ri';
 import AddWebViewModal from '../../components/Modal/ManageWebViewModal';
-
-interface formDataType {
-  workspaceName: string;
-  workspaceEmoji: string;
-}
+import AlertModal from '../../components/Modal/AlertModal';
+import ManageWorkspaceModal from '../../components/Modal/ManageWorkspaceModal';
+import WorkspaceSettingsModal from '../../components/Modal/WorkspaceSettingsModal';
 
 const AppManagerHome = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { workSpaces, currentWorkSpace } = useAppSelector(
+  const { workSpaces, currentWorkSpace, showWorkspaceModal } = useAppSelector(
     (state) => state.workspaceState
   );
 
-  const [showaddWorkspaceModal, setShowaddWorkspaceModal] =
-    useState<boolean>(false);
-  const toggleAddWorkspaceModal = () =>
-    setShowaddWorkspaceModal(!showaddWorkspaceModal);
   const [showAddWebViewModal, setShowAddWebViewModal] = useState(false);
-  const toggleAddWebViewModal = () =>
-    setShowAddWebViewModal(!showAddWebViewModal);
-
-  const [formData, setFormData] = useState<formDataType>({
-    workspaceName: '',
-    workspaceEmoji: '',
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showWorkSpaceSettingsModal, setShowWorkSpaceSettingsModal] =
+    useState(false);
+  const [currentData, setCurrentData] = useState<WebViewData>(
+    workSpaces[currentWorkSpace]?.webViews?.[0]
+  );
+  const [selectedWorkspace, setSelectedWorkspace] = useState({
+    workspace: currentWorkSpace,
+    index: 0,
   });
 
-  const handleFromDataChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev: formDataType): formDataType => {
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
+  const toggleAddWebViewModal = () =>
+    setShowAddWebViewModal(!showAddWebViewModal);
+  const toggleDeleteModal = () => setShowDeleteModal(!showDeleteModal);
+  const toggleWorkspaceSettingsModal = () =>
+    setShowWorkSpaceSettingsModal(!showWorkSpaceSettingsModal);
+
+  const deleteWebApp = (id: string, url: string) => {
+    dispatch(deleteWebAppEntry({ id, url }));
   };
 
   const changeWebView = (id: string) => {
@@ -52,25 +49,20 @@ const AppManagerHome = () => {
     navigate('/webAppsHome');
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    dispatch(
-      addWorkSpace({
-        name: formData.workspaceName,
-        emoji: formData.workspaceEmoji,
-      })
+  const AllWorkspaces = () => {
+    return Object.entries(workSpaces).sort((a, b) =>
+      a[1].webViews.length < b[1].webViews.length ? 1 : -1
     );
-    toggleAddWorkspaceModal();
   };
 
   return (
-    <div className="px-4 flex flex-col gap-4 ">
+    <div className="px-4 flex flex-col gap-4 overflow-auto h-full ">
       {/* header  */}
       <div className="mt-4 flex items-center justify-between">
         <h1 className="font-medium">App Workspaces</h1>
 
         <button
-          onClick={toggleAddWorkspaceModal}
+          onClick={() => dispatch(toggleManageWorkspaceModal())}
           className="bg-blue-500 px-3 py-1 rounded-md text-sm text-white"
         >
           Create Workspace
@@ -82,43 +74,53 @@ const AppManagerHome = () => {
       {/* main body  */}
       {Object.keys(workSpaces).length > 0 && (
         <main>
-          <section className="flex gap-3">
-            {Object.entries(workSpaces).map(([key, value], index) => (
+          <section className="grid grid-cols-3 xl:grid-cols-4 gap-3">
+            {AllWorkspaces().map(([key, value], index) => (
               <div
-                onClick={() => {
-                  dispatch(switchWorkSpace({ name: key }));
-                }}
                 key={index}
                 className={`${
                   currentWorkSpace === key
                     ? 'border-blue-400'
                     : 'border-gray-100 dark:border-dark'
-                } border-2 p-2 h-fit text-gray-500 dark:bg-dark dark:text-white relative w-fit cursor-pointer rounded-lg text-sm bold flex justify-between items-center `}
+                } border-2 px-3 py-2  text-gray-500 dark:bg-dark dark:text-white relative rounded-lg text-sm bold flex items-center justify-between`}
               >
-                <div className="flex items-center gap-4 p-1">
+                <div
+                  className="flex items-center gap-3 cursor-pointer"
+                  onClick={() => {
+                    dispatch(switchWorkSpace({ name: key }));
+                  }}
+                >
                   <div
                     className="bg-blue-100 dark:bg-darker rounded-md text-center flex justify-center items-center"
                     style={{ width: '50px', height: '50px' }}
                   >
-                    <p className="text-2xl">{value.workspaceDetails.emoji}</p>
+                    <p className="text-2xl">{value?.workspaceDetails?.emoji}</p>
                   </div>
                   <div className=" flex flex-col gap-1">
-                    <p className="text-md capitalize ">{key} Workspace </p>
+                    <p className="text-md capitalize line-clamp-1 ">
+                      {key} Workspace{' '}
+                    </p>
                     <p className="text-xs">
                       Contains {value.webViews.length}{' '}
                       {value.webViews.length > 1 ? 'Apps' : 'App'}
                     </p>
                   </div>
-                  <div>
-                    {currentWorkSpace === key && (
-                      <button
-                        onClick={() => navigate('/webAppsHome')}
-                        className="bg-blue-500 w-6 h-6 flex items-center justify-center rounded-full"
-                      >
-                        <BiPlay className="text-white" />
-                      </button>
-                    )}
-                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <RiSettings2Fill
+                    onClick={() => {
+                      setSelectedWorkspace({ workspace: key, index: index });
+                      toggleWorkspaceSettingsModal();
+                    }}
+                    className="text-lg cursor-pointer"
+                  />
+                  <BiLinkExternal
+                    className="text-lg cursor-pointer"
+                    onClick={() => {
+                      dispatch(switchWorkSpace({ name: key }));
+                      navigate('/webAppsHome');
+                    }}
+                  />
                 </div>
               </div>
             ))}
@@ -139,104 +141,65 @@ const AppManagerHome = () => {
 
           <hr className="my-4 dark:border-dark" />
 
-          <section className="h-full">
-            <div className="grid grid-cols-3 xl:grid-cols-4 gap-3">
-              {workSpaces[currentWorkSpace]?.webViews.map((item, index) => (
-                <div
-                  key={index}
-                  className={`h-[200px] border-2 ${
-                    item.id === workSpaces[currentWorkSpace].currentWebViewId
-                      ? 'border-blue-500'
-                      : 'border-gray-100 dark:border-transparent'
-                  }  rounded-md`}
-                >
-                  {item.screenshot ? (
+          <section className="grid grid-cols-3 xl:grid-cols-4 gap-3">
+            {workSpaces[currentWorkSpace]?.webViews.map((item, index) => (
+              <div
+                key={index}
+                className={`h-[200px] border-2 ${
+                  item.id === workSpaces[currentWorkSpace].currentWebViewId
+                    ? 'border-blue-500'
+                    : 'border-gray-100 dark:border-transparent'
+                }  rounded-md`}
+              >
+                {item.screenshot ? (
+                  <img
+                    src={item?.screenshot}
+                    className="w-full h-[70%] bg-white object-cover rounded-t-md"
+                    alt="ss"
+                  />
+                ) : (
+                  <div className="h-[70%] w-full flex justify-center items-center  bg-gray-100 rounded-t-md">
                     <img
-                      src={item?.screenshot}
-                      className="w-full h-[70%] object-cover rounded-t-md"
-                      alt="ss"
+                      className="w-7 h-7 backdrop-blur-md shadow-md rounded-md"
+                      src={`http://www.google.com/s2/favicons?domain=${item.url}`}
+                      alt="icon"
                     />
-                  ) : (
-                    <div className="h-[70%] w-full flex justify-center items-center  bg-gray-100 rounded-t-md">
-                      <img
-                        className="w-7 h-7 backdrop-blur-md shadow-md rounded-md"
-                        src={`http://www.google.com/s2/favicons?domain=${item.url}`}
-                        alt="icon"
-                      />
+                  </div>
+                )}
+                <div className="flex h-[30%] border-gray-100  dark:border-dark dark:bg-dark dark:text-white relative items-center justify-between gap-3 p-4 w-full rounded-b-md">
+                  <div
+                    className="flex items-center gap-3 cursor-pointer"
+                    onClick={() => changeWebView(item.id)}
+                  >
+                    <img
+                      className="w-6 h-6 shadow-md rounded-md"
+                      src={`http://www.google.com/s2/favicons?domain=${item.url}`}
+                      alt="icon"
+                    />
+                    <div>
+                      <h2 className="text-base">{item.name}</h2>
+                      <p className="text-xs">{item.url}</p>
                     </div>
-                  )}
-                  <div className="flex h-[30%] border-gray-100  dark:border-dark dark:bg-dark dark:text-white relative items-center justify-between gap-3 p-4 w-full rounded-b-md">
+                  </div>
+                  <div className="flex">
                     <div
-                      className="flex items-center gap-3 cursor-pointer"
-                      onClick={() => changeWebView(item.id)}
+                      className="mx-2"
+                      onClick={() => {
+                        setCurrentData(item);
+                        toggleDeleteModal();
+                      }}
                     >
-                      <img
-                        className="w-6 h-6 shadow-md rounded-md"
-                        src={`http://www.google.com/s2/favicons?domain=${item.url}`}
-                        alt="icon"
-                      />
-                      <div>
-                        <h2 className="text-base">{item.name}</h2>
-                        <p className="text-xs">{item.url}</p>
-                      </div>
-                    </div>
-                    <div className="flex">
-                      <div className="mx-2">
-                        <RiDeleteBin3Line className="text-xl hover:text-red-500 cursor-pointer " />
-                      </div>
+                      <RiDeleteBin3Line className="text-xl hover:text-red-500 cursor-pointer " />
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </section>
         </main>
       )}
 
       {/* modals  */}
-      {showaddWorkspaceModal && (
-        <ModalContainer toggleModal={toggleAddWorkspaceModal}>
-          <form
-            className="w-[25vw] xl:w-[20vw] h-fit flex flex-col gap-3"
-            onSubmit={handleSubmit}
-          >
-            <div className="flex justify-between items-center ">
-              <h1>Create Workspace</h1>
-              <div
-                className="bg-gray-100 dark:bg-dark w-5 cursor-pointer h-5 flex justify-center items-center rounded-full"
-                onClick={toggleAddWorkspaceModal}
-              >
-                <RiCloseLine className="text-sm" />
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-4">
-              <input
-                value={formData.workspaceName}
-                onChange={handleFromDataChange}
-                type="text"
-                className="border-2 rounded-md w-full px-2 py-1 dark:bg-dark dark:border-dark placeholder:text-sm"
-                placeholder="Workspace Name"
-                name="workspaceName"
-              />
-              <input
-                value={formData.workspaceEmoji}
-                onChange={handleFromDataChange}
-                type="text"
-                placeholder="Add Emoji"
-                className="border-2 rounded-md w-full px-2 py-1 dark:bg-dark dark:border-dark placeholder:text-sm"
-                name="workspaceEmoji"
-              />
-            </div>
-            <button
-              type="submit"
-              className="bg-blue-500 py-2 w-full rounded-md text-white"
-            >
-              Add Workspaces
-            </button>
-          </form>
-        </ModalContainer>
-      )}
       {showAddWebViewModal && (
         <ModalContainer
           toggleModal={toggleAddWebViewModal}
@@ -250,6 +213,35 @@ const AppManagerHome = () => {
           <AddWebViewModal toggleModal={toggleAddWebViewModal} />
         </ModalContainer>
       )}
+      {showWorkSpaceSettingsModal && (
+        <ModalContainer
+          toggleModal={toggleWorkspaceSettingsModal}
+          innerContainerStyles={{
+            width: '300px',
+            height: '100%',
+            overflowY: 'auto',
+          }}
+          outerContainerStyles={{ justifyContent: 'flex-start' }}
+        >
+          <WorkspaceSettingsModal
+            toggleModal={toggleWorkspaceSettingsModal}
+            selectedWorkspace={selectedWorkspace}
+          />
+        </ModalContainer>
+      )}
+      {showDeleteModal && (
+        <AlertModal
+          title="⚠️ Confirmation for Deletion"
+          message={`Do you want to delete "${currentData.name}" from your ${currentWorkSpace} workspace ?`}
+          toggleModal={toggleDeleteModal}
+          actionButtonTitle="delete"
+          actionBtnFunc={() => {
+            deleteWebApp(currentData.id, currentData.url);
+            toggleDeleteModal();
+          }}
+        />
+      )}
+      {showWorkspaceModal && <ManageWorkspaceModal home={true} />}
     </div>
   );
 };

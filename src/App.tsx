@@ -15,9 +15,7 @@ const App = () => {
   return (
     <Suspense
       fallback={
-        <div className="dark:bg-darker absolute top-0 left-0 right-0 bottom-0 ">
-          Loading...
-        </div>
+        <div className="transition-all  flex items-center justify-center absolute top-0 left-0 right-0 bottom-0 dark:bg-darker "></div>
       }
     >
       <Routes>

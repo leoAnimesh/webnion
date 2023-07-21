@@ -48,11 +48,11 @@ const SideBar = () => {
         {/* menu button  */}
         <div
           onClick={() =>
-            changeWebView(workSpaces[currentWorkSpace].WorkspaceMenu.id)
+            changeWebView(workSpaces[currentWorkSpace].workspaceDetails.menu_id)
           }
           className={`border-2 ${
             workSpaces[currentWorkSpace].currentWebViewId ===
-            workSpaces[currentWorkSpace].WorkspaceMenu.id
+            workSpaces[currentWorkSpace].workspaceDetails.menu_id
               ? 'border-blue-600'
               : 'border-gray-100 dark:border-dark'
           } text-gray-500 dark:bg-dark  relative w-full cursor-pointer h-12 rounded-lg text-sm bold flex justify-between gap-4 px-3 items-center `}
