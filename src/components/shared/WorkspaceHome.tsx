@@ -16,7 +16,6 @@ import {
 } from '../../redux/slices/WorkspaceDataSlice';
 import moment from 'moment';
 import AlertModal from '../Modal/AlertModal';
-import { WebViewData } from '../../types/workspaceDataTypes';
 
 const WorkspaceHome = () => {
   const dispatch = useAppDispatch();

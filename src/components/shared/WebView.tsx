@@ -2,7 +2,6 @@ import { useRef, useEffect, useState } from 'react';
 import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
 import { GoTools } from 'react-icons/go';
 import { TfiReload } from 'react-icons/tfi';
-import { WebViewData } from '../../types/workspaceDataTypes';
 import { RiCloseFill } from 'react-icons/ri';
 import { useAppDispatch } from '../../redux/hooks';
 import { addWebViewScreenShot } from '../../redux/slices/WorkspaceSlice';

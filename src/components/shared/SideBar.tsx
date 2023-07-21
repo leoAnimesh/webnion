@@ -6,7 +6,6 @@ import {
 import AddWebViewModal from '../Modal/ManageWebViewModal';
 
 import { BiPin } from 'react-icons/bi';
-import { WebViewData } from '../../types/workspaceDataTypes';
 import { useState } from 'react';
 
 const SideBar = () => {

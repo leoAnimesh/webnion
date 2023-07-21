@@ -3,7 +3,6 @@ import { useAppSelector } from '../redux/hooks';
 import MainWindowWrapper from '../components/shared/MainWindowWrapper';
 import WebView from '../components/shared/WebView';
 import { useMemo } from 'react';
-import { WebViewData } from '../types/workspaceDataTypes';
 
 const WorkspaceRenderer = () => {
   const { workSpaces, currentWorkSpace } = useAppSelector(
