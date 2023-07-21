@@ -117,7 +117,7 @@ const WorkspaceHome = () => {
 
       {!showBrowserWindow && (
         <section
-          className="flex flex-col items-center justify-center gap-5 overflow-scroll "
+          className="flex flex-col items-center justify-center gap-5 overflow-auto "
           style={{ height: '100%' }}
         >
           <div className="flex flex-col items-center gap-3 w-full ">

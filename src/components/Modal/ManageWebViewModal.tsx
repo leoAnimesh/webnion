@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { addWebView } from '../../redux/slices/WorkspaceSlice';
 import { WebViewPresets } from '../../utils/StaticData/PresetWebApps';
 import { RiAddCircleLine, RiCheckFill, RiCloseLine } from 'react-icons/ri';
-import ModalContainer from './ModalContainer';
 
 interface ManageWebViewModalProps {
   toggleModal: () => void;
@@ -98,15 +97,7 @@ const ManageWebViewModal: React.FC<ManageWebViewModalProps> = ({
   }, [formData.url]);
 
   return (
-    <ModalContainer
-      toggleModal={toggleModal}
-      innerContainerStyles={{
-        width: '300px',
-        height: '100%',
-        overflow: 'scroll',
-      }}
-      outerContainerStyles={{ left: `68px` }}
-    >
+    <>
       <form onSubmit={onSubmit} className="flex flex-col gap-3 mb-1 w-full">
         <div className="flex items-center justify-between">
           <h1 className="text-lg font-semibold">Add Web Apps</h1>
@@ -185,7 +176,7 @@ const ManageWebViewModal: React.FC<ManageWebViewModalProps> = ({
           </div>
         ))}
       </div>
-    </ModalContainer>
+    </>
   );
 };
 

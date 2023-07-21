@@ -3,7 +3,7 @@ import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
 import { GoTools } from 'react-icons/go';
 import { TfiReload } from 'react-icons/tfi';
 import { RiCloseFill } from 'react-icons/ri';
-import { useAppDispatch } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { addWebViewScreenShot } from '../../redux/slices/WorkspaceSlice';
 
 const WebView: React.FC<{
@@ -11,6 +11,9 @@ const WebView: React.FC<{
   close?: () => void;
 }> = ({ data, close }) => {
   const dispatch = useAppDispatch();
+  const { workSpaces, currentWorkSpace } = useAppSelector(
+    (state) => state.workspaceState
+  );
   const ispopupsAllowed = 'true' as any;
   let webViewRef = useRef<any>(null);
   const [currentURL, setCurrentURL] = useState(data.url);
@@ -79,13 +82,6 @@ const WebView: React.FC<{
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36'
         );
       }
-
-      if (!data?.screenshot) {
-        setTimeout(async () => {
-          await captureScreenshot();
-        }, 2000);
-      }
-
       console.log('web view is ready');
     });
 
@@ -103,6 +99,17 @@ const WebView: React.FC<{
       );
     };
   }, []);
+
+  useEffect(() => {
+    if (
+      workSpaces[currentWorkSpace].currentWebViewId === data.id &&
+      !data?.screenshot
+    ) {
+      setTimeout(async () => {
+        await captureScreenshot();
+      }, 2000);
+    }
+  }, [workSpaces[currentWorkSpace].currentWebViewId]);
 
   return (
     <>

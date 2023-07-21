@@ -2,3 +2,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  * {
+    scrollbar-color: #c0c0c0 #f0f0f0;
+    scrollbar-width: thin;
+  }
+
+  /* Define the styles for the scrollbar track */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  /* Define the styles for the scrollbar thumb (the draggable part) */
+  ::-webkit-scrollbar-thumb {
+    background-color: #c0c0c0;
+    border-radius: 5px;
+  }
+
+  /* Define the styles for the scrollbar track when the thumb is hovered */
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #a0a0a0;
+  }
+
+  /* Define the styles for the scrollbar track when the thumb is active (being dragged) */
+  ::-webkit-scrollbar-thumb:active {
+    background-color: #808080;
+  }
+}

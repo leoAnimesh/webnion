@@ -7,6 +7,7 @@ import AddWebViewModal from '../Modal/ManageWebViewModal';
 
 import { BiPin } from 'react-icons/bi';
 import { useState } from 'react';
+import ModalContainer from '../Modal/ModalContainer';
 
 const SideBar = () => {
   const dispatch = useAppDispatch();
@@ -104,7 +105,17 @@ const SideBar = () => {
         </button>
       </section>
       {showAddWebViewModal && (
-        <AddWebViewModal toggleModal={toggleAddWebViewModal} />
+        <ModalContainer
+          toggleModal={toggleAddWebViewModal}
+          innerContainerStyles={{
+            width: '300px',
+            height: '100%',
+            overflowY: 'auto',
+          }}
+          outerContainerStyles={{ left: `68px`, justifyContent: 'flex-start' }}
+        >
+          <AddWebViewModal toggleModal={toggleAddWebViewModal} />
+        </ModalContainer>
       )}
     </aside>
   );

@@ -3,8 +3,8 @@ import { useEffect, useRef, ReactNode } from 'react';
 interface ModalContainerProps {
   children: ReactNode;
   toggleModal: () => void;
-  outerContainerStyles?: { [key: string]: string | number };
-  innerContainerStyles?: { [key: string]: string | number };
+  outerContainerStyles?: React.CSSProperties;
+  innerContainerStyles?: React.CSSProperties;
 }
 
 const ModalContainer: React.FC<ModalContainerProps> = ({
@@ -40,7 +40,7 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
   return (
     <div
       style={{ ...outerContainerStyles }}
-      className="absolute top-0 right-0 bottom-0 h-screen w-screen z-10  backdrop-blur-sm backdrop-opacity-2 flex justify-start items-center"
+      className="absolute top-0 right-0 bottom-0 h-screen w-screen z-10  backdrop-blur-sm backdrop-opacity-2 flex justify-center items-center"
     >
       <div
         ref={modalRef}
