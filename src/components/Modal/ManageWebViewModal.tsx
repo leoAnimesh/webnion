@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { addWebView } from '../../redux/slices/WorkspaceSlice';
 import { WebViewPresets } from '../../utils/StaticData/PresetWebApps';
 import { RiAddCircleLine, RiCheckFill, RiCloseLine } from 'react-icons/ri';
+import { toast } from 'react-toastify';
 
 interface ManageWebViewModalProps {
   toggleModal: () => void;
@@ -37,10 +38,10 @@ const ManageWebViewModal: React.FC<ManageWebViewModalProps> = ({
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     let id = uuid();
-    console.log(workSpaces[currentWorkSpace].webViewsObj);
-
     if (workSpaces[currentWorkSpace].webViewsObj.hasOwnProperty(formData.url)) {
-      window.alert('already presen in current workspace ');
+      toast(`${formData.url} alreay present in current workspace `, {
+        type: 'info',
+      });
       return;
     }
     dispatch(addWebView({ ...formData, pinned: false, id }));

@@ -1,21 +1,34 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { v4 as uuid } from 'uuid';
-
-const initialState: WorkSpacesType = {
-  workSpaces: {
-    // default: {
-    //   workspaceDetails: {
-    //     emoji: '🌐',
-    //   },
-    //   WorkspaceMenu: {
-    //     id: '03220916-6c71-4d83-9545-487d09e8bc87',
-    //     name: 'WebApps Menu',
-    //   },
-    //   webViewsObj: {},
-    //   webViews: [],
-    //   currentWebViewId: '03220916-6c71-4d83-9545-487d09e8bc87',
-    // },
+/**
+ * Slice Structure
+ workSpaces: {
+    // default stand for the workspace names
+    default: {
+      workspaceDetails: {
+        id: '03220916-6c71-4d83-9545-487d09e8bc87',
+        emoji: '🌐',
+      },
+      webViewsObj: {
+        'https:example.com' : '03220916-6c71-4d83-9545-487d09e8bc87',
+      },
+      webViews: [
+        {
+          id: '03220916-6c71-4d83-9545-487d09e8bc87',
+          name: 'Google',
+          url: 'https://example.com',
+          pinned: false,
+          screenshot?: 'screenshort-blob-string',
+        }
+      ],
+      currentWebViewId: '03220916-6c71-4d83-9545-487d09e8bc87',
+    },
   },
+  showWorkspaceModal: false,
+  currentWorkSpace: '',
+ */
+const initialState: WorkSpacesType = {
+  workSpaces: {},
   showWorkspaceModal: false,
   currentWorkSpace: '',
 };
@@ -50,13 +63,23 @@ export const WorkspaceSlice = createSlice({
     },
     deleteWebAppEntry: (
       state,
-      action: PayloadAction<{ id: string; url: string }>
+      action: PayloadAction<{ id: string; url: string; index: number }>
     ) => {
-      const { id, url } = action.payload;
+      const { id, url, index } = action.payload;
       let filterData = state.workSpaces[state.currentWorkSpace].webViews.filter(
         (item) => item.id !== id
       );
+
+      console.log(filterData);
+
       delete state.workSpaces[state.currentWorkSpace].webViewsObj[url];
+      if (state.workSpaces[state.currentWorkSpace].webViews.length === 1) {
+        state.workSpaces[state.currentWorkSpace].currentWebViewId =
+          state.workSpaces[state.currentWorkSpace].workspaceDetails.menu_id;
+      } else {
+        state.workSpaces[state.currentWorkSpace].currentWebViewId =
+          state.workSpaces[state.currentWorkSpace].webViews[index - 1].id;
+      }
       state.workSpaces[state.currentWorkSpace].webViews = [...filterData];
     },
     toggleManageWorkspaceModal: (state) => {

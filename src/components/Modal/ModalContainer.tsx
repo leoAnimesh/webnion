@@ -40,7 +40,7 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
   return (
     <div
       style={{ ...outerContainerStyles }}
-      className="absolute top-0 right-0 bottom-0 h-screen w-screen z-10  backdrop-blur-sm backdrop-opacity-2 flex justify-center items-center"
+      className="absolute top-0 right-0 bottom-0 h-screen w-screen z-10 overflow-hidden  backdrop-blur-sm backdrop-opacity-2 flex justify-center items-center"
     >
       <div
         ref={modalRef}

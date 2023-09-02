@@ -7,9 +7,6 @@ const WebWorkspaceHome = React.lazy(() => import('./pages/WebWorkspaceHome'));
 const AppManagerHome = React.lazy(
   () => import('./pages/HomePages/AppManagerHome')
 );
-const WebResponsiveHome = React.lazy(
-  () => import('./pages/HomePages/WebResponsiveHome')
-);
 
 const App = () => {
   return (
@@ -21,7 +18,6 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />}>
           <Route index path="app-manager" element={<AppManagerHome />} />
-          <Route path="web-flex" element={<WebResponsiveHome />} />
         </Route>
         <Route path="/webAppsHome" element={<WebWorkspaceHome />}>
           <Route path="/webAppsHome/:id" element={<WorkspaceRenderer />} />

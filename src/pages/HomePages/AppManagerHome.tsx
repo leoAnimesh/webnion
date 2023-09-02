@@ -14,6 +14,8 @@ import AddWebViewModal from '../../components/Modal/ManageWebViewModal';
 import AlertModal from '../../components/Modal/AlertModal';
 import ManageWorkspaceModal from '../../components/Modal/ManageWorkspaceModal';
 import WorkspaceSettingsModal from '../../components/Modal/WorkspaceSettingsModal';
+import LottieMessageScreen from '../../components/shared/LottieMessageScreen';
+import NotFountAnimation from '../../assets/lottie/notFound.json';
 
 const AppManagerHome = () => {
   const dispatch = useAppDispatch();
@@ -26,9 +28,10 @@ const AppManagerHome = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showWorkSpaceSettingsModal, setShowWorkSpaceSettingsModal] =
     useState(false);
-  const [currentData, setCurrentData] = useState<WebViewData>(
-    workSpaces[currentWorkSpace]?.webViews?.[0]
-  );
+  const [currentData, setCurrentData] = useState<{
+    data: WebViewData;
+    index: number;
+  }>({ data: workSpaces[currentWorkSpace]?.webViews?.[0], index: 0 });
   const [selectedWorkspace, setSelectedWorkspace] = useState({
     workspace: currentWorkSpace,
     index: 0,
@@ -40,8 +43,8 @@ const AppManagerHome = () => {
   const toggleWorkspaceSettingsModal = () =>
     setShowWorkSpaceSettingsModal(!showWorkSpaceSettingsModal);
 
-  const deleteWebApp = (id: string, url: string) => {
-    dispatch(deleteWebAppEntry({ id, url }));
+  const deleteWebApp = (id: string, url: string, index: number) => {
+    dispatch(deleteWebAppEntry({ id, url, index }));
   };
 
   const changeWebView = (id: string) => {
@@ -56,7 +59,7 @@ const AppManagerHome = () => {
   };
 
   return (
-    <div className="px-4 flex flex-col gap-4 overflow-auto h-full ">
+    <div className="px-4 flex flex-col gap-4 overflow-auto h-full w-full pb-3 ">
       {/* header  */}
       <div className="mt-4 flex items-center justify-between">
         <h1 className="font-medium">App Workspaces</h1>
@@ -72,8 +75,18 @@ const AppManagerHome = () => {
       <hr className="dark:border-dark" />
 
       {/* main body  */}
-      {Object.keys(workSpaces).length > 0 && (
-        <main>
+      <main className="flex flex-col flex-1">
+        {/* no worspace found messsage  */}
+        {Object.keys(workSpaces).length === 0 && (
+          <LottieMessageScreen
+            animationData={NotFountAnimation}
+            message="No Workspace Found"
+            extra='Click on "Create Workspace" to create one'
+          />
+        )}
+
+        {/* rendering workspaces  */}
+        {Object.keys(workSpaces).length > 0 && (
           <section className="grid grid-cols-3 xl:grid-cols-4 gap-3">
             {AllWorkspaces().map(([key, value], index) => (
               <div
@@ -125,79 +138,99 @@ const AppManagerHome = () => {
               </div>
             ))}
           </section>
+        )}
 
-          <hr className="my-4 dark:border-dark" />
+        {/* rendering worspace apps  */}
+        {Object.keys(workSpaces).length > 0 && (
+          <section className="flex flex-1 flex-col ">
+            <hr className="my-4 dark:border-dark" />
 
-          <div className="mt-4 flex items-center justify-between">
-            <h1 className="font-medium">{currentWorkSpace} Workspace Apps </h1>
+            <div className="flex items-center justify-between">
+              <h1 className="font-medium capitalize">
+                {currentWorkSpace} Workspace Apps{' '}
+              </h1>
 
-            <button
-              onClick={toggleAddWebViewModal}
-              className="bg-blue-500 px-3 py-1 rounded-md text-sm text-white"
-            >
-              Add WebApp
-            </button>
-          </div>
-
-          <hr className="my-4 dark:border-dark" />
-
-          <section className="grid grid-cols-3 xl:grid-cols-4 gap-3">
-            {workSpaces[currentWorkSpace]?.webViews.map((item, index) => (
-              <div
-                key={index}
-                className={`h-[200px] border-2 ${
-                  item.id === workSpaces[currentWorkSpace].currentWebViewId
-                    ? 'border-blue-500'
-                    : 'border-gray-100 dark:border-transparent'
-                }  rounded-md`}
+              <button
+                onClick={toggleAddWebViewModal}
+                className="bg-blue-500 px-3 py-1 rounded-md text-sm text-white"
               >
-                {item.screenshot ? (
-                  <img
-                    src={item?.screenshot}
-                    className="w-full h-[70%] bg-white object-cover rounded-t-md"
-                    alt="ss"
-                  />
-                ) : (
-                  <div className="h-[70%] w-full flex justify-center items-center  bg-gray-100 rounded-t-md">
+                Add WebApp
+              </button>
+            </div>
+
+            <hr className="my-4 dark:border-dark" />
+
+            {workSpaces[currentWorkSpace]?.webViews.length === 0 && (
+              <LottieMessageScreen
+                animationData={NotFountAnimation}
+                message="No Apps Added"
+                extra='Click on "Add WebApp" to add apps'
+              />
+            )}
+
+            <section className="grid grid-cols-3 xl:grid-cols-4 gap-3">
+              {workSpaces[currentWorkSpace]?.webViews.map((item, index) => (
+                <div
+                  key={index}
+                  className={`h-[200px] border-2 ${
+                    item.id === workSpaces[currentWorkSpace].currentWebViewId
+                      ? 'border-blue-500'
+                      : 'border-gray-100 dark:border-transparent'
+                  }  rounded-md`}
+                >
+                  {item.screenshot ? (
                     <img
-                      className="w-7 h-7 backdrop-blur-md shadow-md rounded-md"
-                      src={`http://www.google.com/s2/favicons?domain=${item.url}`}
-                      alt="icon"
+                      src={item?.screenshot}
+                      onError={(err) => console.log(err)}
+                      className="w-full h-[70%] bg-white object-cover rounded-t-md"
+                      alt="ss"
                     />
-                  </div>
-                )}
-                <div className="flex h-[30%] border-gray-100  dark:border-dark dark:bg-dark dark:text-white relative items-center justify-between gap-3 p-4 w-full rounded-b-md">
-                  <div
-                    className="flex items-center gap-3 cursor-pointer"
-                    onClick={() => changeWebView(item.id)}
-                  >
-                    <img
-                      className="w-6 h-6 shadow-md rounded-md"
-                      src={`http://www.google.com/s2/favicons?domain=${item.url}`}
-                      alt="icon"
-                    />
-                    <div>
-                      <h2 className="text-base">{item.name}</h2>
-                      <p className="text-xs">{item.url}</p>
+                  ) : (
+                    <div className="h-[70%] w-full flex justify-center items-center  bg-gray-100 rounded-t-md">
+                      <img
+                        className="w-7 h-7 backdrop-blur-md shadow-md rounded-md"
+                        src={`http://www.google.com/s2/favicons?domain=${item.url}`}
+                        alt="icon"
+                      />
                     </div>
-                  </div>
-                  <div className="flex">
+                  )}
+                  <div className="flex h-[30%] border-gray-100  dark:border-dark dark:bg-dark dark:text-white relative items-center justify-between gap-3 p-4 w-full rounded-b-md">
                     <div
-                      className="mx-2"
-                      onClick={() => {
-                        setCurrentData(item);
-                        toggleDeleteModal();
-                      }}
+                      className="flex items-center gap-3 cursor-pointer"
+                      onClick={() => changeWebView(item.id)}
                     >
-                      <RiDeleteBin3Line className="text-xl hover:text-red-500 cursor-pointer " />
+                      <img
+                        className="w-6 h-6 shadow-md rounded-md"
+                        src={`http://www.google.com/s2/favicons?domain=${item.url}`}
+                        alt="icon"
+                      />
+                      <div>
+                        <h2 className="text-base">{item.name}</h2>
+                        <p className="text-xs">
+                          {item.url.length > 25
+                            ? `${item.url.slice(0, 25)}...`
+                            : item.url}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex">
+                      <div
+                        className="mx-2"
+                        onClick={() => {
+                          setCurrentData({ data: item, index: index });
+                          toggleDeleteModal();
+                        }}
+                      >
+                        <RiDeleteBin3Line className="text-xl hover:text-red-500 cursor-pointer " />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </section>
           </section>
-        </main>
-      )}
+        )}
+      </main>
 
       {/* modals  */}
       {showAddWebViewModal && (
@@ -232,11 +265,15 @@ const AppManagerHome = () => {
       {showDeleteModal && (
         <AlertModal
           title="⚠️ Confirmation for Deletion"
-          message={`Do you want to delete "${currentData.name}" from your ${currentWorkSpace} workspace ?`}
+          message={`Do you want to delete "${currentData.data.name}" from your ${currentWorkSpace} workspace ?`}
           toggleModal={toggleDeleteModal}
           actionButtonTitle="delete"
           actionBtnFunc={() => {
-            deleteWebApp(currentData.id, currentData.url);
+            deleteWebApp(
+              currentData.data.id,
+              currentData.data.url,
+              currentData.index
+            );
             toggleDeleteModal();
           }}
         />

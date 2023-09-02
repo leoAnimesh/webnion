@@ -8,8 +8,9 @@ import ModalContainer from './ModalContainer';
 import { useNavigate } from 'react-router-dom';
 import { BiLeftArrow } from 'react-icons/bi';
 import { useState } from 'react';
-import { RiCloseLine } from 'react-icons/ri';
-
+import { RiCloseLine, RiEmojiStickerFill } from 'react-icons/ri';
+import { toast, ToastContainer } from 'react-toastify';
+import EmojiPicker, { Theme } from 'emoji-picker-react';
 interface formDataType {
   workspaceName: string;
   workspaceEmoji: string;
@@ -18,9 +19,11 @@ interface formDataType {
 const ManageWorkspaceModal = ({ home = false }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const { workSpaces, currentWorkSpace } = useAppSelector(
     (state) => state.workspaceState
   );
+  const EmojiPickerTheme = Theme.AUTO;
 
   const [formData, setFormData] = useState<formDataType>({
     workspaceName: '',
@@ -45,9 +48,13 @@ const ManageWorkspaceModal = ({ home = false }) => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (workSpaces.hasOwnProperty(formData.workspaceName.toLowerCase())) {
+      toast('Worspace Already Exist ', { type: 'info' });
+      return;
+    }
     dispatch(
       addWorkSpace({
-        name: formData.workspaceName,
+        name: formData.workspaceName.toLowerCase(),
         emoji: formData.workspaceEmoji,
       })
     );
@@ -57,6 +64,11 @@ const ManageWorkspaceModal = ({ home = false }) => {
     return Object.entries(workSpaces).sort((a, b) =>
       a[1].webViews.length < b[1].webViews.length ? 1 : -1
     );
+  };
+
+  const onEmojiSelect = (data: any) => {
+    setFormData((prev) => ({ ...prev, workspaceEmoji: data.emoji }));
+    setShowEmojiPicker(!showEmojiPicker);
   };
 
   return (
@@ -120,10 +132,10 @@ const ManageWorkspaceModal = ({ home = false }) => {
 
       {showInputs && (
         <form
-          className="w-full h-fit flex flex-col gap-3"
+          className="w-full h-fit flex flex-col gap-4"
           onSubmit={handleSubmit}
         >
-          <div className="flex justify-between items-center ">
+          <div className="flex justify-between items-center">
             <h1>Create Workspace</h1>
             {!home && (
               <div
@@ -135,31 +147,46 @@ const ManageWorkspaceModal = ({ home = false }) => {
             )}
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-row items-center gap-4">
             <input
+              required
               value={formData.workspaceName}
               onChange={handleFromDataChange}
               type="text"
-              className="border-2 rounded-md w-full px-2 py-1 dark:bg-dark dark:border-dark placeholder:text-sm"
+              className="border-2 outline-none  rounded-md w-full px-2 py-1 dark:bg-dark dark:border-dark placeholder:text-sm"
               placeholder="Workspace Name"
               name="workspaceName"
             />
-            <input
-              value={formData.workspaceEmoji}
-              onChange={handleFromDataChange}
-              type="text"
-              placeholder="Add Emoji"
-              className="border-2 rounded-md w-full px-2 py-1 dark:bg-dark dark:border-dark placeholder:text-sm"
-              name="workspaceEmoji"
-            />
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                setShowEmojiPicker(!showEmojiPicker);
+              }}
+            >
+              {formData.workspaceEmoji !== '' ? (
+                <span className="text-2xl">{formData.workspaceEmoji}</span>
+              ) : (
+                <RiEmojiStickerFill className="text-2xl" />
+              )}
+            </button>
           </div>
           <button
             type="submit"
-            className="bg-blue-500 py-2 w-full rounded-md text-white"
+            className="bg-blue-500 py-2 w-full rounded-md text-white mb-3"
           >
             Add Workspaces
           </button>
         </form>
+      )}
+
+      {showEmojiPicker && (
+        <EmojiPicker
+          width={'100%'}
+          lazyLoadEmojis={true}
+          theme={EmojiPickerTheme}
+          height={'1000vh'}
+          onEmojiClick={onEmojiSelect}
+        />
       )}
 
       {!showInputs && (
@@ -170,6 +197,8 @@ const ManageWorkspaceModal = ({ home = false }) => {
           Add Workspaces
         </button>
       )}
+
+      <ToastContainer />
     </ModalContainer>
   );
 };

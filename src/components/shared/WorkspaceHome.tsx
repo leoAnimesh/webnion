@@ -1,10 +1,9 @@
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   changeCurrentWebView,
-  deleteWebAppEntry,
   togglePinned,
 } from '../../redux/slices/WorkspaceSlice';
-import { RiCloseFill, RiDeleteBin3Line, RiUnpinLine } from 'react-icons/ri';
+import { RiCloseFill, RiUnpinLine } from 'react-icons/ri';
 import { v4 as uuid } from 'uuid';
 import { BiPin } from 'react-icons/bi';
 import { useEffect, useState } from 'react';
@@ -15,7 +14,6 @@ import {
   markTodoAsDone,
 } from '../../redux/slices/WorkspaceDataSlice';
 import moment from 'moment';
-import AlertModal from '../Modal/AlertModal';
 
 const WorkspaceHome = () => {
   const dispatch = useAppDispatch();
@@ -30,11 +28,6 @@ const WorkspaceHome = () => {
   const [query, setQuery] = useState('');
   const [todo, setTodo] = useState<string>('');
   const [currentDateTime, setCurrentDateTime] = useState<Date>(new Date());
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const toggleDeleteModal = () => setShowDeleteModal(!showDeleteModal);
-  const [currentData, setCurrentData] = useState<WebViewData>(
-    workSpaces[currentWorkSpace].webViews[0]
-  );
 
   const changeWebView = (id: string) => {
     dispatch(changeCurrentWebView({ id }));
@@ -42,10 +35,6 @@ const WorkspaceHome = () => {
 
   const toggleShowBrowserWindow = () =>
     setshowBrowserWindow(!showBrowserWindow);
-
-  const deleteWebApp = (id: string, url: string) => {
-    dispatch(deleteWebAppEntry({ id, url }));
-  };
 
   const togglePins = (id: string, pinned: boolean) => {
     dispatch(togglePinned({ id, pinned }));
@@ -96,9 +85,11 @@ const WorkspaceHome = () => {
   }, [showBrowserWindow]);
 
   useEffect(() => {
-    setTimeout(() => {
+    let timer = setTimeout(() => {
       setCurrentDateTime(new Date());
-    }, 1000);
+    }, 1000 * 60);
+
+    return () => clearTimeout(timer);
   }, [currentDateTime]);
 
   return (
@@ -228,7 +219,11 @@ const WorkspaceHome = () => {
                     />
                     <div>
                       <h2 className="text-base">{item.name}</h2>
-                      <p className="text-xs">{item.url}</p>
+                      <p className="text-xs">
+                        {item.url.length > 25
+                          ? `${item.url.slice(0, 20)}...`
+                          : item.url}
+                      </p>
                     </div>
                   </div>
                   <div className="flex">
@@ -247,33 +242,12 @@ const WorkspaceHome = () => {
                         <BiPin className="text-xl hover:text-blue-500 cursor-pointer " />
                       </div>
                     )}
-                    <div
-                      className="mx-2"
-                      onClick={() => {
-                        setCurrentData(item);
-                        toggleDeleteModal();
-                      }}
-                    >
-                      <RiDeleteBin3Line className="text-xl hover:text-red-500 cursor-pointer " />
-                    </div>
                   </div>
                 </div>
               ))}
             </div>
           </section>
         </section>
-      )}
-      {showDeleteModal && (
-        <AlertModal
-          title="⚠️ Confirmation for Deletion"
-          message={`Do you want to delete "${currentData.name}" from your ${currentWorkSpace} workspace ?`}
-          toggleModal={toggleDeleteModal}
-          actionButtonTitle="delete"
-          actionBtnFunc={() => {
-            deleteWebApp(currentData.id, currentData.url);
-            toggleDeleteModal();
-          }}
-        />
       )}
     </div>
   );

@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, memo } from 'react';
 import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
 import { GoTools } from 'react-icons/go';
 import { TfiReload } from 'react-icons/tfi';
@@ -101,13 +101,19 @@ const WebView: React.FC<{
   }, []);
 
   useEffect(() => {
-    if (
-      workSpaces[currentWorkSpace].currentWebViewId === data.id &&
-      !data?.screenshot
-    ) {
-      setTimeout(async () => {
-        await captureScreenshot();
-      }, 2000);
+    if (workSpaces[currentWorkSpace].currentWebViewId === data.id) {
+      if (data?.screenshot) {
+        let component = document.createElement('img');
+        component.src = data.screenshot;
+        component.addEventListener('error', async () => {
+          await captureScreenshot();
+        });
+      }
+      if (!data?.screenshot) {
+        setTimeout(async () => {
+          await captureScreenshot();
+        }, 2000);
+      }
     }
   }, [workSpaces[currentWorkSpace].currentWebViewId]);
 
@@ -181,4 +187,4 @@ const WebView: React.FC<{
   );
 };
 
-export default WebView;
+export default memo(WebView);
