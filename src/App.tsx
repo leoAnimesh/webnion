@@ -1,12 +1,28 @@
-import { Route, Routes } from "react-router-dom"
-import Home from "./pages/Home"
+import { Navigate, Route, Routes } from "react-router-dom"
+import React, { Suspense } from "react"
+import CircularLoader from "./components/shared/CircularLoader";
 
+const Home = React.lazy(() => import('./pages/Home'));
+const MainRenderer = React.lazy(() => import('./pages/MainRenderer'));
+
+const LoadingScreen = () => {
+    return (
+        <div className="flex flex-1 h-screen justify-center items-center">
+            <CircularLoader />
+        </div>
+    )
+}
 
 const App = () => {
     return (
-        <Routes>
-            <Route path="/" element={<Home />} />
-        </Routes>
+        <Suspense fallback={<LoadingScreen />}>
+            <Routes>
+                <Route path="/" element={<Home />} >
+                    <Route index element={<Navigate to="/webapp/0" />} />
+                    <Route path="webapp/:index" element={<MainRenderer />} />
+                </Route>
+            </Routes>
+        </Suspense>
     )
 }
 

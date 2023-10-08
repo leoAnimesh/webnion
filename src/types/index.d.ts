@@ -1,46 +1,14 @@
-export {};
+export { };
 
 declare global {
-  interface Window {
-    electron: any;
-  }
-  interface WebViewData {
-    id: string;
+  interface AppData {
     name: string;
-    url: string;
-    pinned: boolean;
-    screenshot?: string;
+    baseURL: string;
+    currentURL: string;
   }
 
-  interface WorkspaceDetails {
-    menu_id: string;
-    emoji: string;
-  }
-
-  interface WorkspaceDataType {
-    workspaceDetails: WorkspaceDetails;
-    webViewsObj: { [key: string]: string };
-    webViews: WebViewData[];
-    currentWebViewId: string;
-  }
-
-  interface WorkSpacesType {
-    workSpaces: {
-      [key: string]: WorkspaceDataType;
-    };
-    showWorkspaceModal: boolean;
-    currentWorkSpace: string;
-  }
-
-  interface WorkSpaceTodos {
-    todo: string;
-    id: string;
-    date: Date;
-    done: boolean;
-    completedAt: Date | string;
-  }
-
-  interface WorkSpaceDataType {
-    workSpaceData: { [key: string]: { todos: WorkSpaceTodos[] } };
+  interface WebAppsDataType {
+    apps: AppData[];
+    activeApps: AppData[];
   }
 }

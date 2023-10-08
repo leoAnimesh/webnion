@@ -5,19 +5,17 @@ import {
 } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import workspaceReducer from './slices/WorkspaceSlice';
-import WorkspaceDataReducer from './slices/WorkspaceDataSlice';
+import WebAppsSlice from './slices/WebAppsSlice';
 
 const rootReducer = combineReducers({
-  workspaceState: workspaceReducer,
-  workspaceData: WorkspaceDataReducer,
+  webApps: WebAppsSlice,
 });
 
 const persistConfig = {
   key: 'root',
   version: 1,
   storage,
-  whitelist: ['workspaceState'],
+  blacklist: ['webApps'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
 import setupIPCHandlers from './ipcHandler';
+import { db } from './app/db';
 
 // The built directory structure
 //
@@ -11,7 +12,7 @@ import setupIPCHandlers from './ipcHandler';
 // │ │ ├── main.js
 // │ │ └── preload.js
 // │
-process.env.DIST = path.join(__dirname, '../dist');
+process.env.DIST = path.join(__dirname, '../');
 process.env.PUBLIC = app.isPackaged
   ? process.env.DIST
   : path.join(process.env.DIST, '../public');
@@ -19,24 +20,31 @@ process.env.PUBLIC = app.isPackaged
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 
 let win: BrowserWindow | null;
-// 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
 const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL'];
+
 
 function createWindow() {
   win = new BrowserWindow({
+    roundedCorners: true,
+    trafficLightPosition: {
+      x: 10,
+      y: 10
+    },
     icon: path.join(process.env.PUBLIC, 'electron-vite.svg'),
-    width: 1080,
-    height: 720,
+    width: 1280,
+    height: 900,
+    titleBarStyle: 'hidden',
+    titleBarOverlay: true,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js'),
-      partition: 'persist:webx',
       webviewTag: true,
+      plugins: true,
     },
   });
 
-  win.setMenuBarVisibility(VITE_DEV_SERVER_URL ? true : false);
+  win.setMenuBarVisibility(true);
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', new Date().toLocaleString());
@@ -51,11 +59,17 @@ function createWindow() {
 
 app.on('window-all-closed', () => {
   win = null;
+  db().close((err: Error) => {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log('Close the database connection.');
+  });
 });
 
 app.whenReady().then(async () => {
   createWindow();
-
-  // ipcmain request handlers
+  // connect to database
+  db()
   setupIPCHandlers();
 });

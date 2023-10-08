@@ -1,190 +1,138 @@
-import { useRef, useEffect, useState, memo } from 'react';
-import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
-import { GoTools } from 'react-icons/go';
-import { TfiReload } from 'react-icons/tfi';
-import { RiCloseFill } from 'react-icons/ri';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { addWebViewScreenShot } from '../../redux/slices/WorkspaceSlice';
+import React, { useRef, useEffect, useState } from 'react';
+import { Button } from '../ui/button';
+import { ChevronLeft, ChevronRight, Home, Lock, MousePointerSquare, RefreshCcw } from 'lucide-react';
+import { Input } from '../ui/input';
+import CircularLoader from './CircularLoader';
+import ContextMenuWraaper from './ContextMenu';
+import useWebActions from '@/hooks/useWebActions';
+import { useParams } from 'react-router-dom';
+import AddWebAppBtn from './AddWebAppBtn';
 
 const WebView: React.FC<{
-  data: WebViewData;
-  close?: () => void;
-}> = ({ data, close }) => {
-  const dispatch = useAppDispatch();
-  const { workSpaces, currentWorkSpace } = useAppSelector(
-    (state) => state.workspaceState
-  );
+  data: AppData;
+  show: boolean
+}> = ({ data, show }) => {
   const ispopupsAllowed = 'true' as any;
-  let webViewRef = useRef<any>(null);
-  const [currentURL, setCurrentURL] = useState(data.url);
+  const allowPlugins = 'true' as any;
+  const [mainURL, setMainUrl] = useState(data.baseURL);
+  const [currentURL, setCurrentURL] = useState(data.currentURL);
+  const [bgColor, setBgColor] = useState('');
   const [loading, setLoading] = useState(true);
 
-  const backBtn = () => {
-    if (!webViewRef.current.canGoBack()) {
-      if (close) {
-        close();
-        return;
-      }
+  const { index } = useParams();
+  const activeIndex: number = parseInt(index as string)
+
+  const webViewRef = useRef<any>(null);
+  const triggerRef = React.useRef<any>(null);
+
+  const webActions = useWebActions({ webViewRef })
+  const { domain, protocol } = webActions.urlDetails;
+
+  const handleNavigation = (e: any) => {
+    setCurrentURL(e.url);
+  };
+
+  const handleContextMenu = (e: any) => {
+    const Xpos = e.params.x;
+    const Ypos = e.params.y;
+
+    if (triggerRef.current) {
+      const event = new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: Xpos,
+        clientY: Ypos,
+      });
+      triggerRef.current.dispatchEvent(event);
     }
-    webViewRef.current.goBack();
+  }
+
+  const handleLoading = (loading: boolean) => {
+    setLoading(loading);
   };
 
-  const forwardBtn = () => {
-    webViewRef.current.goForward();
-  };
+  const handleBgColor = () => {
+    setTimeout(() => {
+      setBgColor('bg-white');
+    }, 1000)
+  }
 
-  const reloadWindow = () => {
-    webViewRef.current.reloadIgnoringCache();
-  };
-
-  const openDevTools = () => {
-    webViewRef.current.openDevTools();
-  };
-
-  const captureScreenshot = async () => {
-    try {
-      const response = await window.electron.sendIpcRequest(
-        'screenshot-capture-request',
-        {
-          id: webViewRef.current.getWebContentsId(),
-        }
-      );
-
-      dispatch(addWebViewScreenShot({ imageUrl: response, id: data.id }));
-    } catch (error) {
-      console.error('Error in secure request:', error);
-    }
-  };
 
   useEffect(() => {
-    const handleNavigation = (e: any) => {
-      setCurrentURL(e.url);
-    };
-
-    const handleLoading = (loading: boolean) => {
-      setLoading(loading);
-    };
-
-    webViewRef.current?.addEventListener('did-stop-loading', () => {
-      handleLoading(false);
-    });
-    webViewRef.current?.addEventListener('did-start-loading', () =>
-      handleLoading(true)
-    );
-    webViewRef.current?.addEventListener('did-navigate', handleNavigation);
-    webViewRef.current?.addEventListener(
-      'did-navigate-in-page',
-      handleNavigation
-    );
-    webViewRef.current?.addEventListener('dom-ready', () => {
-      if (data.url === 'https://web.whatsapp.com') {
-        webViewRef.current?.setUserAgent(
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36'
-        );
-      }
-      console.log('web view is ready');
-    });
+    webViewRef.current?.addEventListener('context-menu', handleContextMenu);
+    webViewRef.current?.addEventListener('load-commit', handleBgColor);
+    webViewRef.current?.addEventListener('did-stop-loading', () => handleLoading(false));
+    webViewRef.current?.addEventListener('did-start-loading', () => handleLoading(true));
+    webViewRef.current?.addEventListener('did-navigate-in-page', handleNavigation);
 
     return () => {
-      webViewRef.current?.removeEventListener(
-        'did-navigate-in-page',
-        handleNavigation
-      );
-      webViewRef.current?.removeEventListener('did-navigate', handleNavigation);
-      webViewRef.current?.removeEventListener('did-stop-loading', () =>
-        handleLoading(false)
-      );
-      webViewRef.current?.removeEventListener('did-start-loading', () =>
-        handleLoading(false)
-      );
+      webViewRef.current?.removeEventListener('context-menu', handleContextMenu);
+      webViewRef.current?.removeEventListener('load-commit', handleBgColor);
+      webViewRef.current?.removeEventListener('did-stop-loading', () => handleLoading(false));
+      webViewRef.current?.removeEventListener('did-start-loading', () => handleLoading(true));
+      webViewRef.current?.removeEventListener('did-navigate-in-page', handleNavigation);
     };
   }, []);
 
-  useEffect(() => {
-    if (workSpaces[currentWorkSpace].currentWebViewId === data.id) {
-      if (data?.screenshot) {
-        let component = document.createElement('img');
-        component.src = data.screenshot;
-        component.addEventListener('error', async () => {
-          await captureScreenshot();
-        });
-      }
-      if (!data?.screenshot) {
-        setTimeout(async () => {
-          await captureScreenshot();
-        }, 2000);
-      }
-    }
-  }, [workSpaces[currentWorkSpace].currentWebViewId]);
-
   return (
-    <>
-      <section className="flex dark:bg-darker dark:text-white dark:border-darker  sticky top-0 justify-between p-3 border-b-2">
+    <div className={` border ${show ? 'flex flex-col flex-1' : 'hidden'}`}>
+      {/* header section  */}
+      <section className={`flex items-center sticky top-0 justify-between gap-3 p-2 border-b`}>
         {/* left section  */}
         <div className="flex gap-2 ">
-          <div
-            className="border-2 p-1 dark:bg-dark dark:border-dark cursor-pointer rounded-md"
-            onClick={backBtn}
-          >
-            <BiLeftArrow />
-          </div>
-          <div
-            className="border-2 p-1 dark:bg-dark dark:border-dark cursor-pointer rounded-md"
-            onClick={forwardBtn}
-          >
-            <BiRightArrow />
-          </div>
+          <Button disabled={!webActions.canGoBack()} className='w-6 h-6' onClick={webActions.goBack} size={"icon"} variant={"outline"}  >
+            <ChevronLeft className="w-3 h-3" />
+          </Button>
+          <Button className='w-6 h-6' onClick={webActions.goForward} size={"icon"} variant={"outline"}  >
+            <ChevronRight className="w-3 h-3" />
+          </Button>
+          <Button className='w-6 h-6' onClick={webActions.goToHome} size={"icon"} variant={"outline"}  >
+            <Home className="w-3 h-3" />
+          </Button>
         </div>
 
         {/* middle section  */}
-        <div className="w-2/5 border-2 flex dark:bg-dark dark:border-dark justify-between items-center rounded-md">
-          <div className="mx-3 flex justify-center items-center">
-            {loading && (
-              <div
-                className="w-4 h-4 mx-2 rounded-full animate-spin absolute
-                            border-2 border-solid border-blue-600 border-t-transparent"
-              ></div>
-            )}
-          </div>
-          <input
-            disabled
-            className="text-center text-sm w-full dark:bg-dark dark:border-dark"
-            value={currentURL}
-          />
-          <TfiReload className="mx-2 cursor-pointer" onClick={reloadWindow} />
+        <div className="border flex flex-1 justify-between items-center rounded-md">
+          {loading ? (
+            <Button size={"icon"} variant={"outline"} className='w-6 h-6' >
+              <CircularLoader />
+            </Button>
+          ) : <Button className='w-6 h-6' variant={"outline"} size={"icon"} ><Lock className='w-3 h-3' /></Button>}
+          <form className='flex-1' onSubmit={(e) => { e.preventDefault(); setMainUrl(currentURL) }} >
+            <Input
+              disabled={activeIndex !== 0}
+              className="p-0 px-2 m-0 h-6 border-0 text-sm w-full "
+              value={currentURL}
+              onChange={(e) => { e.preventDefault(); setCurrentURL(e.target.value) }}
+            />
+          </form>
+          <AddWebAppBtn domain={domain} protocol={protocol} />
+          <Button className='w-6 h-6' onClick={webActions.reload} size={"icon"} variant={"outline"} >
+            <RefreshCcw className="w-3 h-3" />
+          </Button>
         </div>
 
         {/* right section  */}
-        <div className="flex gap-2">
-          {close ? (
-            <div
-              className="border-2 dark:bg-dark dark:border-dark  p-1 cursor-pointer rounded-md"
-              onClick={close}
-            >
-              <RiCloseFill />
-            </div>
-          ) : (
-            <div
-              className="border-2 dark:bg-dark dark:border-dark  p-1 cursor-pointer rounded-md"
-              onClick={openDevTools}
-            >
-              <GoTools />
-            </div>
-          )}
+        <div className="flex gap-2" >
+          <Button className='w-6 h-6' onClick={webActions.openDevTools} size={"icon"} variant={"outline"}  >
+            <MousePointerSquare className="w-3 h-3 bg-transparent relative" />
+          </Button>
         </div>
       </section>
-      <webview
-        ref={webViewRef}
-        src={data.url}
-        plugins={'true' as any}
-        allowpopups={ispopupsAllowed}
-        webpreferences="nativeWindowOpen=true"
-        useragent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
-        partition={`persist:webx}`}
-        className="w-full h-full"
-      />
-    </>
+
+      <ContextMenuWraaper bgColor={bgColor} webViewRef={webViewRef} triggerRef={triggerRef}>
+        <webview
+          ref={webViewRef as any}
+          src={mainURL}
+          plugins={allowPlugins}
+          allowpopups={ispopupsAllowed}
+          useragent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+          partition={`persist:webx`}
+          className={`w-full h-full`}
+        />
+      </ContextMenuWraaper>
+    </div>
   );
 };
 
-export default memo(WebView);
+export default WebView;
