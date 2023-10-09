@@ -1,33 +1,34 @@
 import WebView from '@/components/shared/WebView';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { addToActiveApps } from '@/redux/slices/WebAppsSlice';
+import useReduxActions from '@/hooks/redux/useReduxActions';
+import useReduxValues from '@/hooks/redux/useReduxValues';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-
 
 const MainRenderer = () => {
-    const { index } = useParams();
-    const activeIndex: number = parseInt(index as string);
-    const dispatch = useAppDispatch();
+    const { activeAppIndex, activeWorkspaceIndex, activeApps } = useReduxValues();
+    const { MountToActiveApps, loadCurrentActiveeWebApp } = useReduxActions();
     const [mount, setMount] = useState(false);
-    const { apps, activeApps } = useAppSelector(state => state.webApps);
-
-    const DynamicLinks = Object.entries(apps).map(item => item[1])
 
     useEffect(() => {
+        loadCurrentActiveeWebApp();
         setMount(true)
     }, [])
 
     useEffect(() => {
         if (mount) {
-            dispatch(addToActiveApps({ index: activeIndex, webApp: DynamicLinks[activeIndex] }))
+            MountToActiveApps();
         }
-    }, [index])
+    }, [activeAppIndex])
+
+    useEffect(() => {
+        if (mount) {
+            loadCurrentActiveeWebApp();
+        }
+    }, [activeWorkspaceIndex])
 
     return (
-        <div className='flex flex-col overflow-hide flex-1'>
+        <div className='flex flex-col overflow-hide border-l flex-1'>
             {activeApps.map((viewData, idx) => (
-                <WebView key={idx} show={activeIndex === idx} data={viewData} />
+                <WebView key={idx} show={activeAppIndex === idx} data={viewData} />
             ))}
         </div>
     )

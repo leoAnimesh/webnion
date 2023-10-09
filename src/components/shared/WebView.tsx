@@ -5,22 +5,20 @@ import { Input } from '../ui/input';
 import CircularLoader from './CircularLoader';
 import ContextMenuWraaper from './ContextMenu';
 import useWebActions from '@/hooks/useWebActions';
-import { useParams } from 'react-router-dom';
 import AddWebAppBtn from './AddWebAppBtn';
+import useReduxValues from '@/hooks/redux/useReduxValues';
 
 const WebView: React.FC<{
   data: AppData;
   show: boolean
 }> = ({ data, show }) => {
+  const { activeAppIndex } = useReduxValues();
   const ispopupsAllowed = 'true' as any;
   const allowPlugins = 'true' as any;
   const [mainURL, setMainUrl] = useState(data.baseURL);
   const [currentURL, setCurrentURL] = useState(data.currentURL);
   const [bgColor, setBgColor] = useState('');
   const [loading, setLoading] = useState(true);
-
-  const { index } = useParams();
-  const activeIndex: number = parseInt(index as string)
 
   const webViewRef = useRef<any>(null);
   const triggerRef = React.useRef<any>(null);
@@ -75,7 +73,7 @@ const WebView: React.FC<{
   }, []);
 
   return (
-    <div className={` border ${show ? 'flex flex-col flex-1' : 'hidden'}`}>
+    <div className={`transition-all duration-200 ${show ? 'flex flex-col flex-1' : 'hidden'}`}>
       {/* header section  */}
       <section className={`flex items-center sticky top-0 justify-between gap-3 p-2 border-b`}>
         {/* left section  */}
@@ -100,7 +98,7 @@ const WebView: React.FC<{
           ) : <Button className='w-6 h-6' variant={"outline"} size={"icon"} ><Lock className='w-3 h-3' /></Button>}
           <form className='flex-1' onSubmit={(e) => { e.preventDefault(); setMainUrl(currentURL) }} >
             <Input
-              disabled={activeIndex !== 0}
+              disabled={activeAppIndex !== 0}
               className="p-0 px-2 m-0 h-6 border-0 text-sm w-full "
               value={currentURL}
               onChange={(e) => { e.preventDefault(); setCurrentURL(e.target.value) }}
@@ -120,8 +118,9 @@ const WebView: React.FC<{
         </div>
       </section>
 
-      <ContextMenuWraaper bgColor={bgColor} webViewRef={webViewRef} triggerRef={triggerRef}>
+      <ContextMenuWraaper bgColor={bgColor} webViewRef={webViewRef} triggerRef={triggerRef} >
         <webview
+          onClick={() => { console.log('clicked') }}
           ref={webViewRef as any}
           src={mainURL}
           plugins={allowPlugins}

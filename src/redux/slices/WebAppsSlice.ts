@@ -1,31 +1,20 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-const HomeApp = {
-    name: 'Home',
-    baseURL: 'https://www.google.com',
-    currentURL: 'https://www.google.com',
-};
-
 const initialState: WebAppsDataType = {
-    apps: [HomeApp],
-    activeApps: [HomeApp],
+    activeApps: []
 };
 
 const webAppsSlice = createSlice({
     name: 'WebApps',
     initialState,
     reducers: {
-        loadWebApps: (state, action: PayloadAction<AppData[]>) => {
+        loadActiveWebApp: (state, action: PayloadAction<{ app: AppData, activeIndex: number }>) => {
+            const { app, activeIndex } = action.payload
+            let temp = [...state.activeApps];
+            temp[activeIndex] = app;
             return {
                 ...state,
-                apps: [...action.payload]
-            }
-        },
-        addWebApp: (state, action: PayloadAction<{ name: string, url: string }>) => {
-            const { name, url } = action.payload;
-            return {
-                ...state,
-                apps: [...state.apps, { name, baseURL: url, currentURL: url }]
+                activeApps: temp,
             }
         },
         addToActiveApps: (state, action: PayloadAction<{ index: number, webApp: AppData }>) => {
@@ -39,12 +28,11 @@ const webAppsSlice = createSlice({
                     activeApps: [...ActiveAppsCopy]
                 }
             }
-
-            return state
-        }
+            return state;
+        },
     },
 });
 
-export const { loadWebApps, addWebApp, addToActiveApps } = webAppsSlice.actions;
+export const { loadActiveWebApp, addToActiveApps } = webAppsSlice.actions;
 
 export default webAppsSlice.reducer;

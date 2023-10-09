@@ -18,8 +18,8 @@ const App = () => {
         <Suspense fallback={<LoadingScreen />}>
             <Routes>
                 <Route path="/" element={<Home />} >
-                    <Route index element={<Navigate to="/webapp/0" />} />
-                    <Route path="webapp/:index" element={<MainRenderer />} />
+                    <Route index element={<Navigate to="workspace" />} />
+                    <Route path="workspace" element={<MainRenderer />} />
                 </Route>
             </Routes>
         </Suspense>

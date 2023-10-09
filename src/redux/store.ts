@@ -5,9 +5,11 @@ import {
 } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import WebAppsSlice from './slices/WebAppsSlice';
+import WebAppsSlice from './slices/webAppsSlice';
+import AppsStoreSlice from './slices/AppStoreSlice';
 
 const rootReducer = combineReducers({
+  appstore: AppsStoreSlice,
   webApps: WebAppsSlice,
 });
 

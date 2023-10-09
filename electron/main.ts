@@ -1,7 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
 import setupIPCHandlers from './ipcHandler';
-import { db } from './app/db';
 
 // The built directory structure
 //
@@ -59,17 +58,9 @@ function createWindow() {
 
 app.on('window-all-closed', () => {
   win = null;
-  db().close((err: Error) => {
-    if (err) {
-      return console.error(err.message);
-    }
-    console.log('Close the database connection.');
-  });
 });
 
 app.whenReady().then(async () => {
   createWindow();
-  // connect to database
-  db()
   setupIPCHandlers();
 });

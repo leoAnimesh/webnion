@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import useReduxActions from "./redux/useReduxActions";
 
 interface useWebActionsProps {
     webViewRef: any
@@ -20,8 +20,8 @@ interface useWebActionsReturn {
 }
 
 const useWebActions = ({ webViewRef }: useWebActionsProps): useWebActionsReturn => {
-    const navigate = useNavigate();
     const [mount, setMount] = useState(false);
+    const { changeActiveWebAppIndex } = useReduxActions();
     const [urlDetails, setUrlDetails] = useState<{ domain: string, protocol: string }>({ domain: '', protocol: '' });
 
     const reload = () => {
@@ -42,7 +42,7 @@ const useWebActions = ({ webViewRef }: useWebActionsProps): useWebActionsReturn 
     }
 
     const goToHome = () => {
-        navigate('/webapp/0');
+        changeActiveWebAppIndex(0);
     }
 
     const goForward = () => {

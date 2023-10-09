@@ -7,14 +7,13 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import { useAppDispatch, useAppSelector } from "@/redux/hooks"
-import { addWebApp } from "@/redux/slices/WebAppsSlice"
 import { Plus } from "lucide-react"
 import React, { useEffect } from "react"
 import { useToast } from "../ui/use-toast"
 import moment from 'moment';
 import { ToastAction } from "../ui/toast"
-import { useNavigate } from "react-router-dom"
+import useReduxActions from "@/hooks/redux/useReduxActions"
+import useReduxValues from "@/hooks/redux/useReduxValues"
 
 interface AddWebAppBtnProps {
     domain: string
@@ -26,10 +25,10 @@ const getNameFromDomain = (domain: string) => {
 }
 
 const AddWebAppBtn: React.FC<AddWebAppBtnProps> = ({ domain, protocol }) => {
-    const navigate = useNavigate();
-    const dispatch = useAppDispatch();
     const { toast, dismiss } = useToast();
-    const { apps } = useAppSelector(state => state.webApps);
+
+    const { changeActiveWebAppIndex, AddWebAppToWorkspace } = useReduxActions();
+    const { apps } = useReduxValues();
 
     const [UrlDetails, setUrlDetails] = React.useState({
         name: '',
@@ -49,19 +48,19 @@ const AddWebAppBtn: React.FC<AddWebAppBtnProps> = ({ domain, protocol }) => {
                 title: "Web App Already Exists",
                 description: moment(Date.now()).format("llll"),
                 action: (
-                    <ToastAction altText={`navigate to ${UrlDetails.name}`} onClick={() => dismiss()} >Dismiss</ToastAction>
+                    <ToastAction altText={`Dismiss`} onClick={() => dismiss()} >Dismiss</ToastAction>
                 ),
             })
             return;
         }
+        AddWebAppToWorkspace(UrlDetails.name, UrlDetails.url)
         toast({
             title: `${UrlDetails.name} Added to Dock`,
             description: moment(Date.now()).format("llll"),
             action: (
-                <ToastAction altText={`navigate to ${UrlDetails.name}`} onClick={() => navigate(`/webapp/${apps.length}`)} >Launch</ToastAction>
+                <ToastAction altText={`navigate to ${UrlDetails.name}`} onClick={() => changeActiveWebAppIndex(apps.length)} >Launch</ToastAction>
             ),
         })
-        dispatch(addWebApp({ name: UrlDetails.name, url: UrlDetails.url }))
     }
 
     return (
