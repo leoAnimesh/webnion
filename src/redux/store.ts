@@ -5,11 +5,11 @@ import {
 } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import WebAppsSlice from './slices/webAppsSlice';
-import AppsStoreSlice from './slices/AppStoreSlice';
+import WebAppsSlice from './slices/webappSlice';
+import WorkspaceSlice from './slices/WorkspaceSlice';
 
 const rootReducer = combineReducers({
-  appstore: AppsStoreSlice,
+  workspace: WorkspaceSlice,
   webApps: WebAppsSlice,
 });
 
@@ -17,7 +17,7 @@ const persistConfig = {
   key: 'root',
   version: 1,
   storage,
-  blacklist: ['webApps'],
+  blacklist: ['webApps', 'workspace'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

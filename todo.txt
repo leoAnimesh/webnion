@@ -1,6 +1,0 @@
-[-] Add Edit workspace options
-[-] Delete workspace feature
-[-] form validation when creating workspace
-[-] Custom Error Message Popup
-[-] use regex to auto detect the app-name from the url
-[-] Add more web-app presets  to /src/utils/StaticData/PresetWebApps.ts

@@ -2,18 +2,16 @@ import { useAppSelector } from "@/redux/hooks";
 
 const useReduxValues = () => {
 
-    const { allApps, allWorkspaces, activeWorkspaceIndex } = useAppSelector(state => state.appstore);
-    const { activeApps } = useAppSelector(state => state.webApps);
-
+    const { workspaces, activeWorkspaceIndex } = useAppSelector(state => state.workspace);
+    const apps = useAppSelector(state => state.webApps);
 
     return {
+        allWorkspaces: workspaces,
+        allApps: apps,
+        workspace: workspaces[activeWorkspaceIndex] || { name: '', emoji: '🌐', activeWebAppIndex: 0 },
+        activeWebAppIndex: workspaces[activeWorkspaceIndex]?.activeWebAppIndex || 0,
         activeWorkspaceIndex,
-        allApps,
-        apps: allApps[activeWorkspaceIndex],
-        allWorkspaces,
-        workspace: allWorkspaces[activeWorkspaceIndex],
-        activeApps,
-        activeAppIndex: allWorkspaces[activeWorkspaceIndex].activeAppIndex,
+        workspaceApps: apps[activeWorkspaceIndex] || [],
     }
 }
 

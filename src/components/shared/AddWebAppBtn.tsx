@@ -15,7 +15,7 @@ import { ToastAction } from "../ui/toast"
 import useReduxActions from "@/hooks/redux/useReduxActions"
 import useReduxValues from "@/hooks/redux/useReduxValues"
 
-interface AddWebAppBtnProps {
+interface AddWebAppBtnProps extends React.HTMLAttributes<HTMLButtonElement> {
     domain: string
     protocol: string
 }
@@ -24,11 +24,11 @@ const getNameFromDomain = (domain: string) => {
     return domain.split('.')[1];
 }
 
-const AddWebAppBtn: React.FC<AddWebAppBtnProps> = ({ domain, protocol }) => {
+const AddWebAppBtn: React.FC<AddWebAppBtnProps> = ({ domain, protocol, ...rest }) => {
     const { toast, dismiss } = useToast();
 
-    const { changeActiveWebAppIndex, AddWebAppToWorkspace } = useReduxActions();
-    const { apps } = useReduxValues();
+    const { workspaceApps, allWorkspaces } = useReduxValues();
+    const { changeCurrentWebAppIndex, addNewWebApp } = useReduxActions();
 
     const [UrlDetails, setUrlDetails] = React.useState({
         name: '',
@@ -36,6 +36,7 @@ const AddWebAppBtn: React.FC<AddWebAppBtnProps> = ({ domain, protocol }) => {
     });
 
     useEffect(() => {
+        if (domain === '' && protocol === '') return;
         setUrlDetails({
             name: getNameFromDomain(domain),
             url: `${protocol}//${domain}`
@@ -43,7 +44,7 @@ const AddWebAppBtn: React.FC<AddWebAppBtnProps> = ({ domain, protocol }) => {
     }, [domain, protocol])
 
     const onAddWebApp = () => {
-        if (apps.find(app => app.baseURL.includes(UrlDetails.url))) {
+        if (workspaceApps.find(app => app.baseURL.includes(UrlDetails.url))) {
             toast({
                 title: "Web App Already Exists",
                 description: moment(Date.now()).format("llll"),
@@ -53,20 +54,25 @@ const AddWebAppBtn: React.FC<AddWebAppBtnProps> = ({ domain, protocol }) => {
             })
             return;
         }
-        AddWebAppToWorkspace(UrlDetails.name, UrlDetails.url)
+        addNewWebApp(UrlDetails.name, UrlDetails.url)
+        setUrlDetails({ url: '', name: '' })
         toast({
             title: `${UrlDetails.name} Added to Dock`,
             description: moment(Date.now()).format("llll"),
             action: (
-                <ToastAction altText={`navigate to ${UrlDetails.name}`} onClick={() => changeActiveWebAppIndex(apps.length)} >Launch</ToastAction>
+                <ToastAction altText={`navigate to ${UrlDetails.name}`} onClick={() => changeCurrentWebAppIndex(workspaceApps.length)} >Launch</ToastAction>
             ),
         })
+    }
+
+    if (allWorkspaces.length === 0) {
+        return null;
     }
 
     return (
         <Popover>
             <PopoverTrigger asChild>
-                <Button className='w-6 h-6' size={"icon"} variant={"outline"} >
+                <Button {...rest} size={"icon"} variant={"outline"} >
                     <Plus className="w-3 h-3" />
                 </Button>
             </PopoverTrigger>

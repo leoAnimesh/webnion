@@ -5,28 +5,11 @@ declare global {
     electron: any;
   }
 
-  interface AppsStoreType {
-    activeWorkspaceIndex: number;
-    allApps: { [key: number]: AppData[] };
-    allWorkspaces: WorkSpaceData[]
-  }
-
   interface AppData {
+    id: number;
     name: string;
     baseURL: string;
     currentURL: string;
   }
 
-  interface WorkSpaceData {
-    emoji: string;
-    name: string;
-    activeAppIndex: number
-  }
-  interface WebAppsDataType {
-    activeApps: AppData[];
-  }
-
-  interface WorkSpacesDataType {
-    activeAppIndex: number;
-  }
 }

@@ -15,11 +15,12 @@ import useReduxValues from "@/hooks/redux/useReduxValues"
 
 const SwitcherSheet = () => {
     const { workspace, allWorkspaces } = useReduxValues();
+
     return (
         <Sheet>
             <SheetTrigger asChild>
                 <Button variant={"secondary"} className="w-full gap-2 justify-start " size={"default"}>
-                    <span className="text-sm" >{workspace.emoji}</span>
+                    <span className="text-sm" >{workspace.emoji || '🌐'}</span>
                     <span className={`text-sm overflow-hidden`} >{workspace.name}</span>
                 </Button>
             </SheetTrigger>

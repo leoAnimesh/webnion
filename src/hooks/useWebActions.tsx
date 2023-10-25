@@ -21,7 +21,7 @@ interface useWebActionsReturn {
 
 const useWebActions = ({ webViewRef }: useWebActionsProps): useWebActionsReturn => {
     const [mount, setMount] = useState(false);
-    const { changeActiveWebAppIndex } = useReduxActions();
+    const { SwitchWebApp } = useReduxActions();
     const [urlDetails, setUrlDetails] = useState<{ domain: string, protocol: string }>({ domain: '', protocol: '' });
 
     const reload = () => {
@@ -42,7 +42,7 @@ const useWebActions = ({ webViewRef }: useWebActionsProps): useWebActionsReturn 
     }
 
     const goToHome = () => {
-        changeActiveWebAppIndex(0);
+        SwitchWebApp(0);
     }
 
     const goForward = () => {

@@ -4,12 +4,18 @@ import { SheetClose } from "../ui/sheet"
 import useReduxValues from "@/hooks/redux/useReduxValues"
 import useReduxActions from "@/hooks/redux/useReduxActions"
 
-const WorkSpaceList = ({ data, workspaceIndex }: { data: WorkSpaceData, workspaceIndex: number }) => {
+interface WorkspaceType {
+    name: string,
+    emoji: string
+}
+
+const WorkSpaceList = ({ data, workspaceIndex }: { data: WorkspaceType, workspaceIndex: number }) => {
     const { activeWorkspaceIndex, allApps } = useReduxValues();
-    const { changeWorkSpace } = useReduxActions();
+    const { changeCurrentWorkspaceIndex } = useReduxActions();
 
     const onSwitchWorkspace = () => {
-        changeWorkSpace(workspaceIndex)
+        if (activeWorkspaceIndex === workspaceIndex) return;
+        changeCurrentWorkspaceIndex(workspaceIndex)
     };
 
     return (
@@ -26,7 +32,7 @@ const WorkSpaceList = ({ data, workspaceIndex }: { data: WorkSpaceData, workspac
                         {data.name} workspace
                     </p>
                     <p className="text-xs text-muted-foreground">
-                        Total {allApps[workspaceIndex].length} Apps in this workspace
+                        Total {allApps[workspaceIndex]?.length || 0} Apps in this workspace
                     </p>
                 </div>
                 <Checkbox className="rounded-lg" checked={workspaceIndex === activeWorkspaceIndex} />

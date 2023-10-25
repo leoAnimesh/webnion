@@ -1,44 +1,35 @@
-import { addDefaultAddAppToWorkspace, addWebAppToWorkspace, addWorkspace, switchWorkspace, changeActiveAppIndex } from "@/redux/slices/AppStoreSlice";
-import { addToActiveApps, loadActiveWebApp } from "@/redux/slices/webAppsSlice";
 import { useDispatch } from "react-redux";
 import useReduxValues from "./useReduxValues";
+import { addWorkspace, setActiveWebAppIndex, setActiveWorkspaceIndex } from "@/redux/slices/WorkspaceSlice";
+import { addWebApp } from "@/redux/slices/webappSlice";
+import { v4 as uuid } from 'uuid'
 
 const useReduxActions = () => {
     const dispatch = useDispatch();
-    const { apps, activeAppIndex, allWorkspaces } = useReduxValues();
+    const { activeWorkspaceIndex } = useReduxValues();
 
-    const MountToActiveApps = () => {
-        dispatch(addToActiveApps({ index: activeAppIndex, webApp: apps[activeAppIndex] }));
+    const changeCurrentWebAppIndex = (index: number) => {
+        dispatch(setActiveWebAppIndex({ index }))
     }
 
-    const loadCurrentActiveeWebApp = () => {
-        dispatch(loadActiveWebApp({ app: apps[activeAppIndex], activeIndex: activeAppIndex }))
+    const changeCurrentWorkspaceIndex = (index: number) => {
+        dispatch(setActiveWorkspaceIndex(index))
     }
 
-    const AddWebAppToWorkspace = (name: string, url: string) => {
-        dispatch(addWebAppToWorkspace({ name, url }))
-    }
-
-    const changeActiveWebAppIndex = (index: number) => {
-        dispatch(changeActiveAppIndex({ currentIndex: index }));
-    }
-
-    const changeWorkSpace = (index: number) => {
-        dispatch(switchWorkspace(index))
-    }
-
-    const AddNewWorkspace = (name: string, emoji: string) => {
-        dispatch(addDefaultAddAppToWorkspace({ workspaceIndex: allWorkspaces.length }))
+    const addNewWorkSpace = (name: string, emoji: string) => {
         dispatch(addWorkspace({ name, emoji }))
     }
 
+    const addNewWebApp = (name: string, url: string) => {
+        dispatch(addWebApp({ workspaceIndex: activeWorkspaceIndex, app: { name, baseURL: url, currentURL: url, id: uuid() } }))
+    }
+
+
     return {
-        changeActiveWebAppIndex,
-        AddWebAppToWorkspace,
-        loadCurrentActiveeWebApp,
-        MountToActiveApps,
-        changeWorkSpace,
-        AddNewWorkspace
+        changeCurrentWebAppIndex,
+        changeCurrentWorkspaceIndex,
+        addNewWorkSpace,
+        addNewWebApp
     }
 }
 

@@ -12,7 +12,7 @@ import {
 import useWebActions from "@/hooks/useWebActions";
 import React, { ReactNode } from "react";
 
-const ContextMenuWraaper: React.FC<{ children: ReactNode; triggerRef: any, webViewRef: any, bgColor: string }> = ({ children, triggerRef, webViewRef, bgColor }) => {
+const WebViewContextMenu: React.FC<{ children: ReactNode; triggerRef: any, webViewRef: any, bgColor: string }> = ({ children, triggerRef, webViewRef, bgColor }) => {
     const webActions = useWebActions({ webViewRef });
 
     return (
@@ -52,4 +52,4 @@ const ContextMenuWraaper: React.FC<{ children: ReactNode; triggerRef: any, webVi
     )
 }
 
-export default ContextMenuWraaper;
+export default WebViewContextMenu;

@@ -21,7 +21,7 @@ import useReduxActions from "@/hooks/redux/useReduxActions"
 const AddWorkSpace = () => {
     const { toast, dismiss } = useToast();
     const { allWorkspaces } = useReduxValues();
-    const { AddNewWorkspace } = useReduxActions();
+    const { addNewWorkSpace } = useReduxActions();
     const [name, setName] = useState("");
     const [emoji, setEmoji] = useState("");
 
@@ -47,7 +47,7 @@ const AddWorkSpace = () => {
             })
             return;
         }
-        AddNewWorkspace(name, emoji)
+        addNewWorkSpace(name, emoji)
         toast({
             title: `${name} Workspace Created`,
             description: moment(Date.now()).format("llll"),

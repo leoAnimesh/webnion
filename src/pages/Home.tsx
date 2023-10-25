@@ -8,10 +8,7 @@ const Home = () => {
       <Navbar />
       <div className="flex h-screen relative">
         <SideBar />
-        <div className="w-[65px]"></div>
-        <div className=" flex flex-1">
-          <Outlet />
-        </div>
+        <Outlet />
       </div>
     </div>
   );
