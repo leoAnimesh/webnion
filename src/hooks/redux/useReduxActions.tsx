@@ -1,15 +1,15 @@
 import { useDispatch } from "react-redux";
 import useReduxValues from "./useReduxValues";
-import { addWorkspace, setActiveWebAppIndex, setActiveWorkspaceIndex } from "@/redux/slices/WorkspaceSlice";
-import { addWebApp } from "@/redux/slices/webappSlice";
+import { addWorkspace, setActiveWorkspaceIndex } from "@/redux/slices/WorkspaceSlice";
+import { addWebApp, removeWebApp, setActiveWebAppId } from "@/redux/slices/webappsSlice";
 import { v4 as uuid } from 'uuid'
 
 const useReduxActions = () => {
     const dispatch = useDispatch();
     const { activeWorkspaceIndex } = useReduxValues();
 
-    const changeCurrentWebAppIndex = (index: number) => {
-        dispatch(setActiveWebAppIndex({ index }))
+    const changeCurrentWebAppIndex = (id: string) => {
+        dispatch(setActiveWebAppId(id))
     }
 
     const changeCurrentWorkspaceIndex = (index: number) => {
@@ -24,12 +24,17 @@ const useReduxActions = () => {
         dispatch(addWebApp({ workspaceIndex: activeWorkspaceIndex, app: { name, baseURL: url, currentURL: url, id: uuid() } }))
     }
 
+    const deleteWebApp = (id: string) => {
+        dispatch(removeWebApp({ workspaceIndex: activeWorkspaceIndex, id }))
+    }
+
 
     return {
         changeCurrentWebAppIndex,
         changeCurrentWorkspaceIndex,
         addNewWorkSpace,
-        addNewWebApp
+        addNewWebApp,
+        deleteWebApp,
     }
 }
 

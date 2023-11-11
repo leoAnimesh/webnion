@@ -18,7 +18,7 @@ const WebView: React.FC<{
   data: AppData;
   show: boolean
 }> = ({ data, show }) => {
-  const { activeWorkspaceIndex, activeWebAppIndex } = useReduxValues();
+  const { activeWebAppIndex } = useReduxValues();
   const ispopupsAllowed = 'true' as any;
   const allowPlugins = 'true' as any;
   const [mainURL, setMainUrl] = useState(data?.baseURL);

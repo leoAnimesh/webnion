@@ -1,4 +1,4 @@
-import { CalendarDays, Pin, Trash2 } from "lucide-react"
+import { Trash2 } from "lucide-react"
 import {
   HoverCard,
   HoverCardContent,
@@ -6,15 +6,12 @@ import {
 } from "@/components/ui/hover-card"
 import React, { ReactNode } from "react"
 import { Button } from "../ui/button";
-import useReduxValues from "@/hooks/redux/useReduxValues";
-
-interface AppData {
-  name: string;
-  baseURL: string;
-  currentURL: string;
-}
+import useReduxActions from "@/hooks/redux/useReduxActions";
 
 const WebAppHoverMenu: React.FC<{ children: ReactNode, AppDetails: AppData }> = ({ children, AppDetails }) => {
+
+  const { deleteWebApp } = useReduxActions();
+
   return (
     <HoverCard  >
       <HoverCardTrigger asChild>
@@ -24,20 +21,14 @@ const WebAppHoverMenu: React.FC<{ children: ReactNode, AppDetails: AppData }> = 
         <div className="flex justify-between space-x-4">
           <div className="space-y-1">
             <h4 className="text-sm text-left font-semibold">@{AppDetails.name}</h4>
-            <p className="text-sm">
+            <p className="text-sm normal-case">
               URL : {AppDetails.baseURL}
             </p>
             <div className="flex items-center pt-2 gap-3">
-              <Button variant={"link"} size={"sm"} className="flex gap-2 items-center p-0" >
+              <Button onClick={() => deleteWebApp(AppDetails.id)} variant={"link"} size={"sm"} className="flex gap-2 items-center p-0" >
                 <Trash2 className="h-4 w-4 opacity-70" />{" "}
                 <span className="text-xs text-muted-foreground">
                   Delete App
-                </span>
-              </Button>
-              <Button variant={"link"} size={"sm"} className="flex gap-2 items-center p-0" >
-                <Pin className="h-4 w-4 opacity-70" />{" "}
-                <span className="text-xs text-muted-foreground">
-                  Pin App
                 </span>
               </Button>
             </div>

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import useReduxActions from "./redux/useReduxActions";
 
 interface useWebActionsProps {
     webViewRef: any
@@ -21,7 +20,6 @@ interface useWebActionsReturn {
 
 const useWebActions = ({ webViewRef }: useWebActionsProps): useWebActionsReturn => {
     const [mount, setMount] = useState(false);
-    const { SwitchWebApp } = useReduxActions();
     const [urlDetails, setUrlDetails] = useState<{ domain: string, protocol: string }>({ domain: '', protocol: '' });
 
     const reload = () => {
@@ -42,7 +40,8 @@ const useWebActions = ({ webViewRef }: useWebActionsProps): useWebActionsReturn 
     }
 
     const goToHome = () => {
-        SwitchWebApp(0);
+        // TODO : Implement go to Home
+        return;
     }
 
     const goForward = () => {

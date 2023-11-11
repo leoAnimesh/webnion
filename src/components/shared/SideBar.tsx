@@ -5,10 +5,9 @@ import AddWebAppBtn from "./AddWebAppBtn";
 import useReduxValues from "@/hooks/redux/useReduxValues";
 import useReduxActions from "@/hooks/redux/useReduxActions";
 import WebAppHoverMenu from "../ContextMenus/WebAppsHoverMenu";
-import { Button } from "../ui/button";
 
 const SideBar = () => {
-  const { workspaceApps, activeWebAppIndex } = useReduxValues();
+  const { workspaceApps, activeWebAppId } = useReduxValues();
   const { changeCurrentWebAppIndex } = useReduxActions();
 
 
@@ -18,12 +17,12 @@ const SideBar = () => {
         <SwitcherSheet />
         <span className="text-xs" >APPS</span>
         {workspaceApps.length > 0 &&
-          <Tabs value={activeWebAppIndex.toString()} className="flex flex-col w-full transition-all duration-500">
+          <Tabs value={activeWebAppId} className="flex flex-col w-full transition-all duration-500">
             <TabsList className="flex flex-1 flex-col gap-1  " >
-              {workspaceApps.map((item, index) => (
-                <TabsTrigger key={index} className={`text-md w-full px-0 capitalize`}
-                  value={index.toString()}
-                  onClick={() => changeCurrentWebAppIndex(index)}
+              {workspaceApps.map((item) => (
+                <TabsTrigger key={item.id} className={`text-md w-full px-0 capitalize`}
+                  value={item.id}
+                  onClick={() => changeCurrentWebAppIndex(item.id)}
                 >
                   <WebAppHoverMenu AppDetails={item} >
                     <div className="w-full flex flex-1 justify-center items-center align-middle ">

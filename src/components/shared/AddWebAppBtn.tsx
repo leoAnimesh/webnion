@@ -60,7 +60,7 @@ const AddWebAppBtn: React.FC<AddWebAppBtnProps> = ({ domain, protocol, ...rest }
             title: `${UrlDetails.name} Added to Dock`,
             description: moment(Date.now()).format("llll"),
             action: (
-                <ToastAction altText={`navigate to ${UrlDetails.name}`} onClick={() => changeCurrentWebAppIndex(workspaceApps.length)} >Launch</ToastAction>
+                <ToastAction altText={`navigate to ${UrlDetails.name}`} onClick={() => changeCurrentWebAppIndex(workspaceApps[workspaceApps.length].id)} >Launch</ToastAction>
             ),
         })
     }

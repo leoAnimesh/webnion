@@ -6,10 +6,16 @@ declare global {
   }
 
   interface AppData {
-    id: number;
+    id: string;
     name: string;
     baseURL: string;
     currentURL: string;
   }
+
+  interface WorkspaceType {
+    name: string,
+    emoji: string
+  }
+
 
 }
