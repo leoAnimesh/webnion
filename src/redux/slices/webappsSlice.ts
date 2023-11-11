@@ -1,36 +1,53 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 interface WebappsType {
-    activeWebAppId?: string,
-    apps: { [key: number]: AppData[] }
+  activeWebAppIndex: number;
+  apps: AppData[];
 }
 
 const initialState: WebappsType = {
-    activeWebAppId: '',
-    apps: {},
+  activeWebAppIndex: 0,
+  apps: [],
 };
 
 const webAppsSlice = createSlice({
-    name: 'WebApps',
-    initialState,
-    reducers: {
-        addWebApp: (state, action: PayloadAction<{ workspaceIndex: number, app: AppData }>) => {
-            const { workspaceIndex, app } = action.payload;
-            if (!state.apps[workspaceIndex]) {
-                state.apps[workspaceIndex] = [];
-            }
-            state.apps[workspaceIndex].push(app);
-        },
-        removeWebApp: (state, action: PayloadAction<{ workspaceIndex: number, id: string }>) => {
-            const { workspaceIndex, id } = action.payload;
-            state.apps[workspaceIndex] = state.apps[workspaceIndex].filter((app) => app.id !== id);
-        },
-        setActiveWebAppId: (state, action: PayloadAction<string>) => {
-            state.activeWebAppId = action.payload;
-        }
+  name: "WebApps",
+  initialState,
+  reducers: {
+    addWebApp: (state, action: PayloadAction<{ app: AppData }>) => {
+      state.apps.push(action.payload.app);
     },
+    setWebApps: (state, action: PayloadAction<{ apps: AppData[] }>) => {
+      state.apps = action.payload.apps;
+    },
+    removeWebApp: (state, action: PayloadAction<{ id: number }>) => {
+      const { id } = action.payload;
+      let temp = [];
+      temp = state.apps.filter((app) => app.appId !== id);
+      return {
+        ...state,
+        activeWebAppIndex:
+          state.activeWebAppIndex > 0
+            ? state.activeWebAppIndex - 1
+            : initialState.activeWebAppIndex,
+        apps: temp,
+      };
+    },
+    setActiveWebAppIndex: (state, action: PayloadAction<number>) => {
+      state.activeWebAppIndex = action.payload;
+    },
+    clearWebApps: (state) => {
+      state.apps = initialState.apps;
+    },
+  },
 });
 
-export const { addWebApp, removeWebApp, setActiveWebAppId } = webAppsSlice.actions;
+export const {
+  addWebApp,
+  setWebApps,
+  removeWebApp,
+  setActiveWebAppIndex,
+  clearWebApps,
+} = webAppsSlice.actions;
 
 export default webAppsSlice.reducer;

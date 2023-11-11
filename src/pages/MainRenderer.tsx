@@ -1,19 +1,48 @@
-import WebView from '@/components/shared/WebView';
-import useReduxValues from '@/hooks/redux/useReduxValues';
+import CircularLoader from "@/components/shared/CircularLoader";
+import WebView from "@/components/shared/WebView";
+import useReduxActions from "@/hooks/redux/useReduxActions";
+import useReduxValues from "@/hooks/redux/useReduxValues";
+import { useEffect, useState } from "react";
 
 const MainRenderer = () => {
-    const { workspaceApps, activeWebAppId } = useReduxValues();
+  const { allApps, activeWebAppId, activeWorkspaceIndex } = useReduxValues();
+  const { setAllWorkSpaces, setAllApps } = useReduxActions();
+  const [mount, setMount] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-    console.log(workspaceApps);
+  const fetchData = async () => {
+    await Promise.all([setAllWorkSpaces(), setAllApps()]);
+  };
 
+  useEffect(() => {
+    if (mount) {
+      setLoading(true);
+      setAllApps().finally(() => setTimeout(() => setLoading(false), 100));
+    }
+  }, [activeWorkspaceIndex, allApps.length]);
 
-    return (
-        <div className='flex flex-col overflow-hide border-l flex-1'>
-            {workspaceApps.map((viewData) => (
-                <WebView key={viewData.id} show={activeWebAppId === viewData.id} data={viewData} />
-            ))}
-        </div>
-    )
-}
+  useEffect(() => {
+    setLoading(true);
+    fetchData()
+      .then(() => setMount(true))
+      .finally(() => setTimeout(() => setLoading(false), 50));
+  }, []);
 
-export default MainRenderer
+  if (loading) {
+    return null;
+  }
+
+  return (
+    <div className="flex flex-col overflow-hide flex-1">
+      {allApps.map((viewData) => (
+        <WebView
+          key={viewData.appId}
+          show={activeWebAppId === viewData.appId}
+          data={viewData}
+        />
+      ))}
+    </div>
+  );
+};
+
+export default MainRenderer;

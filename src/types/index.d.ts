@@ -1,4 +1,4 @@
-export { };
+export {};
 
 declare global {
   interface Window {
@@ -6,16 +6,17 @@ declare global {
   }
 
   interface AppData {
-    id: string;
+    appId: number;
     name: string;
-    baseURL: string;
-    currentURL: string;
+    url: string;
+    workspaceId: number;
+    currentURL?: string;
   }
 
   interface WorkspaceType {
-    name: string,
-    emoji: string
+    id: number;
+    name: string;
+    icon: string;
+    totalApps: number;
   }
-
-
 }

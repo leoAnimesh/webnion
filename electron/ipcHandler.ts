@@ -1,20 +1,14 @@
-import { ipcMain, webContents } from 'electron';
+import { ipcMain } from "electron";
+import workspaceController from "./controllers/workspaceController";
+import WebappsController from "./controllers/WebappsController";
 
 function setupIPCHandlers() {
-  // take screenshot of the webview
-  ipcMain.handle('screenshot-capture-request', (_, args: { id: number }) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        if (!args.id) reject({ message: 'No webview id provided' });
-        let component = webContents.fromId(args.id);
-        const image = await component?.capturePage();
-        const dataURL = image?.toDataURL();
-        return resolve({ image: dataURL });
-      } catch (err) {
-        reject(err);
-      }
-    })
-  })
+  ipcMain.handle("createWorkSpace", workspaceController.createWorkspace);
+  ipcMain.handle("getWorkspaces", workspaceController.getWorkspaces);
+  ipcMain.handle("createWebApp", WebappsController.createWebApp);
+  ipcMain.handle("getWebApps", WebappsController.getWebApps);
+  ipcMain.handle("deleteWebApp", WebappsController.deleteWebApp);
+  ipcMain.handle("deleteWorkspace", workspaceController.deleteWorkspace);
 }
 
-export default setupIPCHandlers
+export default setupIPCHandlers;

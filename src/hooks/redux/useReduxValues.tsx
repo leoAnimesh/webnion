@@ -1,20 +1,20 @@
 import { useAppSelector } from "@/redux/hooks";
 
 const useReduxValues = () => {
-    const { workspaces, activeWorkspaceIndex } = useAppSelector(state => state.workspace);
-    const { apps, activeWebAppId } = useAppSelector(state => state.webApps);
+  const { workspaces, activeWorkspaceIndex } = useAppSelector(
+    (state) => state.workspace
+  );
+  const { apps, activeWebAppIndex } = useAppSelector((state) => state.webApps);
 
-    console.log(apps, activeWebAppId);
-
-
-    return {
-        allWorkspaces: workspaces,
-        allApps: apps,
-        workspace: workspaces[activeWorkspaceIndex] || { name: '', emoji: '🌐' },
-        activeWebAppId: activeWebAppId,
-        activeWorkspaceIndex,
-        workspaceApps: apps[activeWorkspaceIndex] || [],
-    }
-}
+  return {
+    allWorkspaces: workspaces,
+    allApps: apps,
+    workspace: workspaces[activeWorkspaceIndex] || { name: "", emoji: "🌐" },
+    activeWebAppIndex: activeWebAppIndex,
+    activeWebAppId: apps[activeWebAppIndex]?.appId || 1,
+    activeWorkspaceIndex,
+    activeWorkSpaceId: workspaces[activeWorkspaceIndex]?.id || 1,
+  };
+};
 
 export default useReduxValues;
