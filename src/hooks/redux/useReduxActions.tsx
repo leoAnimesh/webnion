@@ -23,6 +23,7 @@ const useReduxActions = () => {
   const { toast, dismiss } = useToast();
   const { activeWorkSpaceId } = useReduxValues();
 
+  // utilities functions
   const FormatPrismaError = (error: any) => {
     return error.message.split(":").at(-1).trim();
   };
@@ -42,6 +43,7 @@ const useReduxActions = () => {
     });
   };
 
+  // workspace actions
   const changeCurrentWorkspaceIndex = (index: number) => {
     dispatch(setActiveWorkspaceIndex(index));
   };
@@ -85,6 +87,7 @@ const useReduxActions = () => {
     }
   };
 
+  // web apps actions
   const setAllApps = async () => {
     console.log("all app setted");
     try {
@@ -124,6 +127,7 @@ const useReduxActions = () => {
           mode: "increment",
         })
       );
+      ShowToast(`${response.name} Added `);
     } catch (error: any) {
       ShowToast(FormatPrismaError(error));
     }

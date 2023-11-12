@@ -17,7 +17,7 @@ const MainRenderer = () => {
   useEffect(() => {
     if (mount) {
       setLoading(true);
-      setAllApps().finally(() => setTimeout(() => setLoading(false), 100));
+      setAllApps().finally(() => setTimeout(() => setLoading(false), 500));
     }
   }, [activeWorkspaceIndex, allApps.length]);
 

@@ -2,15 +2,6 @@ import { app, BrowserWindow } from "electron";
 import path from "node:path";
 import setupIPCHandlers from "./ipcHandler";
 
-// The built directory structure
-//
-// ├─┬─┬ dist
-// │ │ └── index.html
-// │ │
-// │ ├─┬ dist-electron
-// │ │ ├── main.js
-// │ │ └── preload.js
-// │
 process.env.DIST = path.join(__dirname, "../");
 process.env.PUBLIC = app.isPackaged
   ? process.env.DIST
@@ -31,8 +22,6 @@ function createWindow() {
     icon: path.join(process.env.PUBLIC, "electron-vite.svg"),
     width: 1280,
     height: 900,
-    // titleBarStyle: 'hidden',
-    // titleBarOverlay: true,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,

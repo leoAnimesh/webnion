@@ -7,13 +7,15 @@ const useReduxValues = () => {
   const { apps, activeWebAppIndex } = useAppSelector((state) => state.webApps);
 
   return {
+    // workspace values
     allWorkspaces: workspaces,
-    allApps: apps,
-    workspace: workspaces[activeWorkspaceIndex] || { name: "", emoji: "🌐" },
-    activeWebAppIndex: activeWebAppIndex,
-    activeWebAppId: apps[activeWebAppIndex]?.appId || 1,
+    workspace: workspaces[activeWorkspaceIndex] || { name: "", icon: "🌐" },
     activeWorkspaceIndex,
     activeWorkSpaceId: workspaces[activeWorkspaceIndex]?.id || 1,
+    // web apps values
+    allApps: apps,
+    activeWebAppIndex: activeWebAppIndex,
+    activeWebAppId: apps[activeWebAppIndex]?.appId || 1,
   };
 };
 

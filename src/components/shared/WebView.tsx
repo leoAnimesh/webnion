@@ -29,7 +29,7 @@ const WebView: React.FC<{
   const ispopupsAllowed = "true" as any;
   const allowPlugins = "true" as any;
   const [mainURL, setMainUrl] = useState(data?.url);
-  const [currentURL, setCurrentURL] = useState(data?.currentURL);
+  const [currentURL, setCurrentURL] = useState(data?.url);
   const [bgColor, setBgColor] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -153,7 +153,7 @@ const WebView: React.FC<{
             className="flex-1"
             onSubmit={(e) => {
               e.preventDefault();
-              // setMainUrl(currentURL);
+              setMainUrl(currentURL);
             }}
           >
             <Input

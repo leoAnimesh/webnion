@@ -17,7 +17,11 @@ const DeleteWorkspaceBtn = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={"outline"} size="icon" className="w-6 h-6">
+        <Button
+          variant={"outline"}
+          size="icon"
+          className="w-6 h-6 border border-black"
+        >
           <Trash size={10} className="hover:text-red-600" />
         </Button>
       </DialogTrigger>

@@ -21,15 +21,23 @@ const WorkSpaceList = ({
 
   return (
     <div className="flex flex-col">
-      <div className=" flex items-center space-x-4 rounded-md border w p-3">
+      <div
+        className={` flex items-center space-x-4 rounded-md border ${
+          activeWorkspaceIndex === workspaceIndex && "bg-secondary"
+        }  w p-3`}
+      >
         <SheetClose onClick={onSwitchWorkspace}>
-          <Button variant={"outline"} size={"icon"}>
+          <Button
+            variant={"outline"}
+            className={`border border-black rounded-md`}
+            size={"icon"}
+          >
             <p className="text-2xl text-center">{data.icon}</p>
           </Button>
         </SheetClose>
 
         <div className="flex-1 flex flex-col gap-[0.5rem]">
-          <p className="text-sm font-medium leading-none">
+          <p className="text-sm font-medium leading-none capitalize">
             {data.name} workspace
           </p>
           <p className="text-xs text-muted-foreground">

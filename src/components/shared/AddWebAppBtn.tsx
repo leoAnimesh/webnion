@@ -48,7 +48,11 @@ const AddWebAppBtn: React.FC<AddWebAppBtnProps> = ({
   }, [domain, protocol]);
 
   const onAddWebApp = () => {
-    if (allApps.find((app) => app.url.includes(UrlDetails.url))) {
+    if (
+      allApps.find((app) =>
+        app.url.toLowerCase().includes(UrlDetails.url.toLowerCase())
+      )
+    ) {
       toast({
         title: "Web App Already Exists",
         description: moment(Date.now()).format("llll"),
@@ -62,20 +66,6 @@ const AddWebAppBtn: React.FC<AddWebAppBtnProps> = ({
     }
     addNewWebApp(UrlDetails.name, UrlDetails.url, activeWorkSpaceId);
     setUrlDetails({ url: "", name: "" });
-    // toast({
-    //   title: `${UrlDetails.name} Added to Dock`,
-    //   description: moment(Date.now()).format("llll"),
-    //   action: (
-    //     <ToastAction
-    //       altText={`navigate to ${UrlDetails.name}`}
-    //       // onClick={() =>
-    //       //   changeCurrentWebAppIndex(workspaceApps[workspaceApps.length].appId)
-    //       // }
-    //     >
-    //       Launch
-    //     </ToastAction>
-    //   ),
-    // });
   };
 
   if (allWorkspaces.length === 0) {

@@ -24,7 +24,7 @@ const SwitcherSheet = () => {
           className="w-full justify-center items-center "
           size={"default"}
         >
-          <span className="text-sm">{workspace.icon || "🌐"}</span>
+          <span className="text-sm">{workspace.icon}</span>
           <span className={`text-sm overflow-hidden`}>{workspace.name}</span>
         </Button>
       </SheetTrigger>

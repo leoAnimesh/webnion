@@ -31,7 +31,7 @@ const WebAppHoverMenu: React.FC<{
                 size={"sm"}
                 className="flex gap-2 items-center p-0"
               >
-                <Trash2 className="h-4 w-4 opacity-70" />{" "}
+                <Trash2 className="h-4 w-4 opacity-70" />
                 <span className="text-xs text-muted-foreground">
                   Delete App
                 </span>
