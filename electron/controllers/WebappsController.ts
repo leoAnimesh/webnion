@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import { PrismaError } from "../utils/PrismaErrorHandler";
+import { db } from "../config/db";
 
-const prisma = new PrismaClient();
 
 const createWebApp = (
   _: any,
@@ -9,72 +7,69 @@ const createWebApp = (
 ): Promise<AppData> => {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await prisma.webapp.create({
-        data: {
-          name: args.name,
-          url: args.url,
-          workspaceId: args.workspaceId,
-        },
-      });
+      // Step 1: Insert a new Webapp
+      db.run(
+        'INSERT INTO Webapps (name, url, workspaceId) VALUES (?, ?, ?)',
+        [args.name, args.url, args.workspaceId],
+        function (err: Error) {
+          if (err) {
+            reject(err);
+            return;
+          }
 
-      await prisma.workspace.update({
-        where: {
-          id: args.workspaceId,
-        },
-        data: {
-          totalApps: {
-            increment: 1,
-          },
-        },
-      });
+          const webappId = this.lastID;
 
-      resolve(response);
+          // Step 2: Update totalApps in Workspace
+          db.run(
+            'UPDATE Workspaces SET totalApps = totalApps + 1 WHERE id = ?',
+            [args.workspaceId],
+            function (updateErr: Error) {
+              if (updateErr) {
+                reject(updateErr);
+              } else {
+                resolve({ appId: webappId, name: args.name, url: args.url, workspaceId: args.workspaceId });
+              }
+            }
+          );
+        }
+      );
     } catch (error) {
-      reject(PrismaError(error));
+      reject(error);
     }
   });
 };
 
 const deleteWebApp = (_: any, args: { appId: number; workspaceId: number }) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      await prisma.webapp.delete({
-        where: {
-          appId: args.appId,
-        },
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      db.run('DELETE FROM Webapps WHERE appId = ?', args.appId, (deleteErr: Error) => {
+        if (deleteErr) {
+          reject(deleteErr);
+        } else {
+          db.run('UPDATE Workspaces SET totalApps = totalApps - 1 WHERE id = ?', args.workspaceId, (updateErr: Error) => {
+            if (updateErr) {
+              reject(updateErr);
+            } else {
+              resolve({ success: true });
+            }
+          });
+        }
       });
-
-      await prisma.workspace.update({
-        where: {
-          id: args.workspaceId,
-        },
-        data: {
-          totalApps: {
-            decrement: 1,
-          },
-        },
-      });
-
-      resolve({ success: true });
-    } catch (error) {
-      reject(PrismaError(error));
-    }
+    });
   });
 };
 
 const getWebApps = (_: any, args: { workspaceId: number }) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const response = await prisma.webapp.findMany({
-        where: {
-          workspaceId: args.workspaceId,
-        },
-      });
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT * FROM Webapps WHERE workspaceId = ?';
 
-      resolve(response);
-    } catch (error) {
-      reject(PrismaError(error));
-    }
+    db.all(sql, [args.workspaceId], (err: Error, rows: any) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
   });
 };
 

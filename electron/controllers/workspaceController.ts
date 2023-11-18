@@ -1,54 +1,61 @@
-import { PrismaClient } from "@prisma/client";
-import { PrismaError } from "../utils/PrismaErrorHandler";
-const prisma = new PrismaClient();
+import { db } from "../config/db";
+
 
 const createWorkspace = (
   _: any,
   args: { name: string; icon: string }
 ): Promise<WorkspaceType> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const response = await prisma.workspace.create({
-        data: {
-          name: args.name,
-          icon: args.icon,
-        },
+  return new Promise((resolve, reject) => {
+    const sql = `INSERT INTO Workspaces (name, icon) VALUES (?,?)`;
+
+    db.serialize(() => {
+      db.run(sql, [args.name, args.icon], function (err: Error) {
+        if (err) {
+          reject(err);
+        } else {
+          const insertedWorkspaceId = this.lastID;
+          resolve({ id: insertedWorkspaceId, totalApps: 0, name: args.name, icon: args.icon });
+        }
       });
-      resolve(response);
-    } catch (error) {
-      reject(PrismaError(error));
-    }
+    });
   });
+
 };
 
 const getWorkspaces = (): Promise<WorkspaceType[]> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const response = await prisma.workspace.findMany();
-      resolve(response);
-    } catch (error) {
-      reject(PrismaError(error));
-    }
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT * FROM Workspaces';
+
+    db.all(sql, (err: Error, rows: WorkspaceType[]) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
   });
 };
 
 const deleteWorkspace = (_: any, args: { workspaceId: number }) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      await prisma.webapp.deleteMany({
-        where: {
-          workspaceId: args.workspaceId,
-        },
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      // Step 1: Delete Webapps associated with the workspace
+      db.run('DELETE FROM Webapps WHERE workspaceId = ?', [args.workspaceId], function (webappDeleteErr: Error) {
+        if (webappDeleteErr) {
+          reject(webappDeleteErr);
+          return;
+        }
+
+        // Step 2: Delete the Workspace itself
+        db.run('DELETE FROM Workspaces WHERE id = ?', [args.workspaceId], function (workspaceDeleteErr: Error) {
+          if (workspaceDeleteErr) {
+            reject(workspaceDeleteErr);
+          } else {
+            resolve(this.changes);
+          }
+        });
       });
-      const response = await prisma.workspace.delete({
-        where: {
-          id: args.workspaceId,
-        },
-      });
-      resolve(response);
-    } catch (error) {
-      reject(PrismaError(error));
-    }
+    });
   });
 };
 

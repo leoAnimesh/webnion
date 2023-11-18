@@ -17,7 +17,7 @@ const persistConfig = {
   key: "root",
   version: 1,
   storage,
-  blacklist: [],
+  blacklist: ['webApps', 'workspace'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

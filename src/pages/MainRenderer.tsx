@@ -1,4 +1,3 @@
-import CircularLoader from "@/components/shared/CircularLoader";
 import WebView from "@/components/shared/WebView";
 import useReduxActions from "@/hooks/redux/useReduxActions";
 import useReduxValues from "@/hooks/redux/useReduxValues";
