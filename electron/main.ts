@@ -1,7 +1,7 @@
 import { app, BrowserWindow } from "electron";
 import path from "node:path";
 import setupIPCHandlers from "./ipcHandler";
-import { createTables } from "./config/db";
+import { migrateDb } from "./config/db";
 
 
 process.env.DIST = path.join(__dirname, '../dist')
@@ -20,7 +20,6 @@ function createWindow() {
       x: 10,
       y: 10,
     },
-    icon: path.join(process.env.PUBLIC, "electron-vite.svg"),
     width: 1280,
     height: 900,
     webPreferences: {
@@ -53,19 +52,9 @@ app.on('window-all-closed', () => {
   }
 })
 
-app.on('activate', () => {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-    createTables();
-    setupIPCHandlers();
-  }
-})
-
 app.whenReady().then(() => {
   createWindow();
-  createTables();
+  migrateDb();
   setupIPCHandlers();
 })
 
